@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeToggle } from '@/app/_components/ThemeToggle';
 import { paths } from '@/config/paths';
 
 export default function LoginPage() {

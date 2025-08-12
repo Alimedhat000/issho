@@ -1,4 +1,4 @@
-import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeToggle } from '@/app/_components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { paths } from '@/config/paths';
 import Link from 'next/link';

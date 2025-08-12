@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Copy, Edit3, ChevronDown } from 'lucide-react';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeToggle } from '@/app/_components/ThemeToggle';
 
 export default function EventPage() {
   const timeSlots = [

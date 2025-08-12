@@ -1,4 +1,5 @@
 'use client';
+import { CreateEventModal } from '@/app/_components/CreateEventModal';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
@@ -16,10 +17,13 @@ export function HeroSection() {
       </p>
       <div className="mb-16 flex flex-col justify-center gap-4 sm:flex-row">
         <div className="relative">
-          <Button size="lg" className="group px-8 py-6 text-lg">
-            Create event
-            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-          </Button>
+          <CreateEventModal>
+            <Button size="lg" className="group px-8 py-6 text-lg">
+              Create event
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </CreateEventModal>
+
           <span className="text-muted-foreground absolute top-13 left-0 w-full text-xs">
             It&apos;s free! No login required.
           </span>
