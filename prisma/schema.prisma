@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  creatorId   String?  @map("creator_id") // Optional - null for anonymous events
+
+  Participant Participant[]
+  TimeSlot    TimeSlot[]
+  creator     User?         @relation("EventCreator", fields: [creatorId], references: [id], onDelete: SetNull)
+
+  @@map("event")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  avatar       String?
+  googleId     String?  @unique @map("google_id")
+  accessToken  String?  @map("access_token") // For Google Calendar integration
+  refreshToken String?  @map("refresh_token") // For Google Calendar integration
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  participants  Participant[]
+  createdEvents Event[]       @relation("EventCreator")
+
+  @@map("users")
+}
+
+model Participant {
+  id      String  @id @default(cuid())
+  name    String
+  color   String
+  eventId String  @map("event_id")
+  userId  String? @map("user_id") // Optional - null for guest participants
+
+  event    Event      @relation(fields: [eventId], references: [id])
+  TimeSlot TimeSlot[]
+  user     User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("participant")
+}
+
+model TimeSlot {
+  id            String @id @default(cuid())
+  day           String // Format: "2024-01-15"
+  hour          Int // 0-23 (24-hour format)
+  participantId String @map("participant_id")
+  eventId       String @map("event_id")
+
+  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([day, hour, participantId])
+  @@map("time_slots")
+}
