@@ -25,12 +25,6 @@ export default function HomePage() {
             >
               Give feedback
             </a>
-            {/* <a
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Donate
-            </a> */}
             <a
               href="#"
               className="text-muted-foreground hover:text-foreground transition-colors"
