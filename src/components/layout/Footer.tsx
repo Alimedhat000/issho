@@ -1,23 +1,23 @@
-"use client";
+'use client';
 export default function Footer() {
   return (
-    <footer className="border-t bg-muted/30 mt-20">
+    <footer className="bg-muted/30 mt-20 border-t">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary  rounded-lg flex items-center justify-center">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
                 <span className="text-primary-foreground text-xl">緒</span>
               </div>
               <span className="font-bold">Issho</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Making group meetings simple and efficient for teams worldwide.
             </p>
           </div>
           <div>
-            <h4 className="font-semibold mb-3">Product</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="mb-3 font-semibold">Product</h4>
+            <ul className="text-muted-foreground space-y-2 text-sm">
               <li>
                 <a href="#" className="hover:text-foreground transition-colors">
                   Features
@@ -36,8 +36,8 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-3">Company</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="mb-3 font-semibold">Company</h4>
+            <ul className="text-muted-foreground space-y-2 text-sm">
               <li>
                 <a href="#" className="hover:text-foreground transition-colors">
                   About
@@ -56,8 +56,8 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-3">Support</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="mb-3 font-semibold">Support</h4>
+            <ul className="text-muted-foreground space-y-2 text-sm">
               <li>
                 <a href="#" className="hover:text-foreground transition-colors">
                   Help Center
@@ -76,7 +76,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground mt-8 border-t pt-8 text-center text-sm">
           <p>&copy; 2025 Issho. All rights reserved.</p>
         </div>
       </div>

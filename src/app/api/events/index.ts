@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { StatusCodes } from "http-status-codes";
-import { prisma } from "@/lib/prisma";
-import { sqids } from "@/lib/sqids";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { StatusCodes } from 'http-status-codes';
+import { prisma } from '@/lib/prisma';
+import { sqids } from '@/lib/sqids';
 
 async function generateUniqueSqid(numbers: number[]): Promise<string> {
   let sqid = sqids.encode(numbers);
@@ -18,9 +18,9 @@ async function generateUniqueSqid(numbers: number[]): Promise<string> {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  if (req.method !== "POST")
+  if (req.method !== 'POST')
     return res.status(StatusCodes.METHOD_NOT_ALLOWED).end();
 
   const { title, description, startDate, endDate, creatorId } = req.body;
@@ -28,7 +28,7 @@ export default async function handler(
   if (!title || !startDate || !endDate) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ error: "Missing required fields" });
+      .json({ error: 'Missing required fields' });
   }
 
   // Use timestamp + creatorId length or something numeric as base numbers for sqid
@@ -51,6 +51,6 @@ export default async function handler(
   } catch {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Failed to create event" });
+      .json({ error: 'Failed to create event' });
   }
 }

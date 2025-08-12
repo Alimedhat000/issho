@@ -1,26 +1,26 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+'use client';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 export function HeroSection() {
   return (
-    <section className="text-center max-w-4xl mx-auto">
-      <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+    <section className="mx-auto max-w-4xl text-center">
+      <h1 className="from-primary to-primary/60 mb-6 bg-gradient-to-r bg-clip-text text-5xl font-bold text-transparent md:text-6xl">
         Find a time to Be
         <br />
         <span className="text-foreground">Together</span>
       </h1>
-      <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+      <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-xl leading-relaxed">
         Stop the endless back-and-forth polls. Issho makes scheduling group
         meetings effortless...
       </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+      <div className="mb-16 flex flex-col justify-center gap-4 sm:flex-row">
         <div className="relative">
-          <Button size="lg" className="text-lg px-8 py-6 group">
+          <Button size="lg" className="group px-8 py-6 text-lg">
             Create event
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Button>
-          <span className="absolute top-13 left-0 w-full text-xs text-muted-foreground">
+          <span className="text-muted-foreground absolute top-13 left-0 w-full text-xs">
             It&apos;s free! No login required.
           </span>
         </div>

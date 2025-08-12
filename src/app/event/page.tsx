@@ -1,29 +1,29 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Copy, Edit3, ChevronDown } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Copy, Edit3, ChevronDown } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function EventPage() {
   const timeSlots = [
-    "10 AM",
-    "11 AM",
-    "12 PM",
-    "1 PM",
-    "2 PM",
-    "3 PM",
-    "4 PM",
-    "5 PM",
+    '10 AM',
+    '11 AM',
+    '12 PM',
+    '1 PM',
+    '2 PM',
+    '3 PM',
+    '4 PM',
+    '5 PM',
   ];
 
-  const days = ["Mon", "Tue", "Wed"];
+  const days = ['Mon', 'Tue', 'Wed'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+    <div className="from-background to-muted/20 min-h-screen bg-gradient-to-br">
       {/* Header */}
-      <header className="container mx-auto px-4 py-6 border-b bg-background/80 backdrop-blur-sm">
+      <header className="bg-background/80 container mx-auto border-b px-4 py-6 backdrop-blur-sm">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary  rounded-lg flex items-center justify-center">
+            <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
               {/* <Users className="w-5 h-5 text-primary-foreground" /> */}
               <span className="text-primary-foreground text-xl">緒</span>
             </div>
@@ -31,7 +31,7 @@ export default function EventPage() {
           </div>
 
           {/* Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden items-center gap-6 md:flex">
             <a
               href="#"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -51,7 +51,7 @@ export default function EventPage() {
           </div>
 
           {/* Mobile menu */}
-          <div className="md:hidden flex items-center gap-2">
+          <div className="flex items-center gap-2 md:hidden">
             <Button size="sm">Sign up</Button>
             <ThemeToggle />
           </div>
@@ -62,17 +62,17 @@ export default function EventPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Event Header */}
         <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Event Name</h1>
-              <div className="flex items-center gap-4 text-muted-foreground">
+              <h1 className="mb-2 text-4xl font-bold">Event Name</h1>
+              <div className="text-muted-foreground flex items-center gap-4">
                 <span>Mon, Tue, Wed</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-primary hover:text-primary/80 p-0 h-auto"
+                  className="text-primary hover:text-primary/80 h-auto p-0"
                 >
-                  <Edit3 className="w-4 h-4 mr-1" />
+                  <Edit3 className="mr-1 h-4 w-4" />
                   Edit event
                 </Button>
               </div>
@@ -83,7 +83,7 @@ export default function EventPage() {
                 variant="outline"
                 className="flex items-center gap-2 bg-transparent"
               >
-                <Copy className="w-4 h-4" />
+                <Copy className="h-4 w-4" />
                 Copy link
               </Button>
               <Button className="bg-primary hover:bg-primary/90">
@@ -93,21 +93,21 @@ export default function EventPage() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid gap-8 lg:grid-cols-4">
           {/* Calendar Grid */}
           <div className="lg:col-span-3">
             <Card className="p-6">
-              <div className="grid grid-cols-4 gap-0 border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-4 gap-0 overflow-hidden rounded-lg border">
                 {/* Header Row */}
-                <div className="bg-muted/50 p-3 border-r border-b">
-                  <span className="text-sm font-medium text-muted-foreground">
+                <div className="bg-muted/50 border-r border-b p-3">
+                  <span className="text-muted-foreground text-sm font-medium">
                     Time
                   </span>
                 </div>
                 {days.map((day) => (
                   <div
                     key={day}
-                    className="bg-muted/50 p-3 border-r last:border-r-0 border-b text-center"
+                    className="bg-muted/50 border-r border-b p-3 text-center last:border-r-0"
                   >
                     <span className="font-medium">{day}</span>
                   </div>
@@ -116,17 +116,17 @@ export default function EventPage() {
                 {/* Time Slots */}
                 {timeSlots.map((time, timeIndex) => (
                   <div key={time} className="contents">
-                    <div className="p-3 border-r border-b bg-muted/20 text-sm text-muted-foreground">
+                    <div className="bg-muted/20 text-muted-foreground border-r border-b p-3 text-sm">
                       {time}
                     </div>
                     {days.map((day) => (
                       <div
                         key={`${day}-${time}`}
-                        className="p-3 border-r last:border-r-0 border-b hover:bg-muted/30 transition-colors cursor-pointer relative min-h-[60px]"
+                        className="hover:bg-muted/30 relative min-h-[60px] cursor-pointer border-r border-b p-3 transition-colors last:border-r-0"
                       >
                         {/* Sample event block */}
-                        {day === "Tue" && timeIndex === 0 && (
-                          <div className="absolute inset-1 bg-muted-foreground text-primary-foreground rounded text-xs p-2 flex items-center justify-center">
+                        {day === 'Tue' && timeIndex === 0 && (
+                          <div className="bg-muted-foreground text-primary-foreground absolute inset-1 flex items-center justify-center rounded p-2 text-xs">
                             Tue 10:45 AM to 11:00 AM
                           </div>
                         )}
@@ -137,23 +137,23 @@ export default function EventPage() {
               </div>
 
               {/* Timezone Selector */}
-              <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+              <div className="text-muted-foreground mt-4 flex items-center gap-4 text-sm">
                 <span>Shown in</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-1 text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground h-auto p-1"
                 >
                   (GMT+3:00) Cairo
-                  <ChevronDown className="w-4 h-4 ml-1" />
+                  <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-1 text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground h-auto p-1"
                 >
                   12h
-                  <ChevronDown className="w-4 h-4 ml-1" />
+                  <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </Card>
@@ -162,7 +162,7 @@ export default function EventPage() {
           {/* Responses Sidebar */}
           <div className="lg:col-span-1">
             <Card className="p-6">
-              <h3 className="font-semibold mb-4">Responses (0/0)</h3>
+              <h3 className="mb-4 font-semibold">Responses (0/0)</h3>
               <p className="text-muted-foreground text-sm">No responses yet!</p>
             </Card>
           </div>
@@ -170,11 +170,11 @@ export default function EventPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30 mt-20">
+      <footer className="bg-muted/30 mt-20 border-t">
         <div className="container mx-auto px-4 py-8 text-center">
           <a
             href="#"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
           >
             Privacy Policy
           </a>

@@ -1,12 +1,12 @@
-"use client";
-import { Card } from "@/components/ui/card";
-import { Quote } from "lucide-react";
+'use client';
+import { Card } from '@/components/ui/card';
+import { Quote } from 'lucide-react';
 
 export function QuoteSection() {
   return (
-    <Card className="p-8 bg-muted/50 border-l-4 border-l-primary">
-      <Quote className="w-8 h-8 text-primary mx-auto mb-4" />
-      <blockquote className="text-2xl font-medium text-foreground mb-4 italic">
+    <Card className="bg-muted/50 border-l-primary border-l-4 p-8">
+      <Quote className="text-primary mx-auto mb-4 h-8 w-8" />
+      <blockquote className="text-foreground mb-4 text-2xl font-medium italic">
         &quot;Issho transformed how our remote team coordinates. What used to
         take hours of planning now happens in minutes.&quot;
       </blockquote>
