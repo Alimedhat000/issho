@@ -12,18 +12,18 @@ export function useCalendarDrag(
   const [isClick, setIsClick] = useState(false);
   const dragTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const getDateRange = useCallback((startIso: string, endIso: string) => {
-    const start = new Date(startIso);
-    const end = new Date(endIso);
-    const range: string[] = [];
-    const step = start < end ? 1 : -1;
-    const current = new Date(start);
-    while (step > 0 ? current <= end : current >= end) {
-      range.push(current.toISOString().split('T')[0]);
-      current.setDate(current.getDate() + step);
-    }
-    return range;
-  }, []);
+  // const getDateRange = useCallback((startIso: string, endIso: string) => {
+  //   const start = new Date(startIso);
+  //   const end = new Date(endIso);
+  //   const range: string[] = [];
+  //   const step = start < end ? 1 : -1;
+  //   const current = new Date(start);
+  //   while (step > 0 ? current <= end : current >= end) {
+  //     range.push(current.toISOString().split('T')[0]);
+  //     current.setDate(current.getDate() + step);
+  //   }
+  //   return range;
+  // }, []);
 
   const toggleDate = useCallback(
     (isoDate: string) => {
@@ -50,41 +50,41 @@ export function useCalendarDrag(
       setIsClick(true);
       setDragStartDate(isoDate);
 
+      const isInitiallySelected = selectedDates.includes(isoDate);
+      const mode = isInitiallySelected ? 'deselect' : 'select';
+      setDragMode(mode);
+
+      if (mode === 'select') {
+        setTempSelectedDates([isoDate]);
+        setTempDeselectedDates([]);
+      } else {
+        setTempSelectedDates([]);
+        setTempDeselectedDates([isoDate]);
+      }
+
       dragTimeoutRef.current = setTimeout(() => {
         setIsDragging(true);
         setIsClick(false);
-
-        const isInitiallySelected = selectedDates.includes(isoDate);
-        const mode = isInitiallySelected ? 'deselect' : 'select';
-        setDragMode(mode);
-
-        if (mode === 'select') {
-          setTempSelectedDates([isoDate]);
-          setTempDeselectedDates([]);
-        } else {
-          setTempSelectedDates([]);
-          setTempDeselectedDates([isoDate]);
-        }
-      }, 150);
+      }, 50);
     },
     [selectedDates],
   );
 
   const handleMouseEnter = useCallback(
     (isoDate: string) => {
-      if (isDragging && dragStartDate !== null) {
-        const range = getDateRange(dragStartDate, isoDate);
-
+      if (isDragging) {
         if (dragMode === 'select') {
-          setTempSelectedDates(range);
-          setTempDeselectedDates([]);
+          setTempSelectedDates((prev) =>
+            prev.includes(isoDate) ? prev : [...prev, isoDate],
+          );
         } else {
-          setTempSelectedDates([]);
-          setTempDeselectedDates(range);
+          setTempDeselectedDates((prev) =>
+            prev.includes(isoDate) ? prev : [...prev, isoDate],
+          );
         }
       }
     },
-    [isDragging, dragStartDate, dragMode, getDateRange],
+    [isDragging, dragMode],
   );
 
   const handleMouseUp = useCallback(() => {
