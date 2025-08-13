@@ -15,21 +15,35 @@ datasource db {
 }
 
 model Event {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  shortCode   String   @unique @map("short_code") @db.VarChar(10) // 10 chars that will be used for links 
-  startDate   DateTime @map("start_date")
-  endDate     DateTime @map("end_date")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  creatorId   String?  @map("creator_id") // Optional - null for anonymous events
+  id        String   @id @default(cuid())
+  title     String
+  shortCode String   @unique @map("short_code") @db.VarChar(10) // 10 chars that will be used for links 
+  creatorId String?  @map("creator_id") // Optional - null for anonymous events
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  timezone  String? // IANA timezone for the event
+  startTime String?  @map("start_time") // only if dates and times were selected Null if only dates
+  endTime   String?  @map("end_time")
 
   Participant Participant[]
   TimeSlot    TimeSlot[]
   creator     User?         @relation("EventCreator", fields: [creatorId], references: [id], onDelete: SetNull)
+  EventDates  EventDate[]
 
   @@map("event")
+}
+
+model EventDate {
+  id      String    @id @default(cuid())
+  eventId String
+  date    DateTime? // For specific date, if empty use weekdays
+  weekday String? // For week days, if empty use dates
+
+  event    Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  TimeSlot TimeSlot[]
+
+  @@unique([eventId, date, weekday])
+  @@map("event_dates")
 }
 
 model User {
@@ -64,15 +78,24 @@ model Participant {
 }
 
 model TimeSlot {
-  id            String @id @default(cuid())
-  day           String // Format: "2024-01-15"
+  id            String  @id @default(cuid())
+  eventDateId   String  @map("event_date_id")
   hour          Int // 0-23 (24-hour format)
-  participantId String @map("participant_id")
-  eventId       String @map("event_id")
+  minute        Int // minutes within the hour for increments
+  fullDay       Boolean @default(false) // Only True for Days only without times
+  participantId String  @map("participant_id")
+  eventId       String  @map("event_id")
 
   participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
   event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventDate   EventDate   @relation(fields: [eventDateId], references: [id], onDelete: Cascade)
 
-  @@unique([day, hour, participantId])
+  @@unique([eventDateId, hour, minute, fullDay, participantId])
   @@map("time_slots")
 }
+
+/**
+ * EventDate handles either a date or weekday. Only one needs to be filled per entry.
+ * TimeSlot references EventDate so you can generate slots for either specific dates or recurring weekdays.
+ * For days only without times Each EventDate would have one timeslot with a full day flag
+ */
