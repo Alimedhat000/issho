@@ -5,12 +5,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 async function generateUniqueSqid(numbers: number[]): Promise<string> {
   let sqid = sqids.encode(numbers);
-  let exists = await prisma.event.findUnique({ where: { sqid } });
+  let exists = await prisma.event.findUnique({ where: { shortCode: sqid } });
   let attempt = 1;
   // On conflict, vary numbers input (e.g. add attempt count) to get new code
   while (exists) {
     sqid = sqids.encode([...numbers, attempt]);
-    exists = await prisma.event.findUnique({ where: { sqid } });
+    exists = await prisma.event.findUnique({ where: { shortCode: sqid } });
     attempt++;
   }
   return sqid;
