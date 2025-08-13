@@ -13,3 +13,15 @@ export interface EventFormData {
 export interface CreateEventModalProps {
   children: React.ReactNode;
 }
+
+export interface CreateEventPayload {
+  title: string;
+  shortCode?: string;
+  dates: string[]; // YYYY-MM-DD if not week days mode
+  weekDays?: string[]; // ["Monday", "Wednesday"], only if using week mode
+  startTime?: string; // e.g., "09:00" only if using dates and times
+  endTime?: string; // e.g., "17:00"
+  timeIncrement?: number; // minutes, e.g., 30
+  timezone?: string; // IANA, e.g., "Europe/London"
+  creatorId?: string; // optional for anonymous
+}
