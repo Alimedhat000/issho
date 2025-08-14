@@ -1,10 +1,11 @@
 'use client';
 
-import Header from '@/components/layout/Header';
-import { HeroSection } from './_components/HeroSection';
-import { FeaturesSection } from './_components/FeatureSection';
-import { QuoteSection } from './_components/QuoteSection';
 import Footer from '@/components/layout/Footer';
+import Header from '@/components/layout/Header';
+
+import { FeaturesSection } from './_components/FeatureSection';
+import { HeroSection } from './_components/HeroSection';
+import { QuoteSection } from './_components/QuoteSection';
 
 export default function HomePage() {
   return (

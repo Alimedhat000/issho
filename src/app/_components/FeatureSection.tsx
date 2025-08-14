@@ -1,6 +1,7 @@
 'use client';
+import { Calendar, Clock, Users } from 'lucide-react';
+
 import { Card } from '@/components/ui/card';
-import { Calendar, Users, Clock } from 'lucide-react';
 
 export function FeaturesSection() {
   return (

@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { StatusCodes } from 'http-status-codes';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { prisma } from '@/lib/prisma';
 
 // GET /api/event/[shortcode] - Get event by shortcode
 export async function GET(

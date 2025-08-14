@@ -1,8 +1,9 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/app/_components/ThemeToggle';
-import { paths } from '@/config/paths';
 import Link from 'next/link';
+
+import { ThemeToggle } from '@/app/_components/ThemeToggle';
+import { Button } from '@/components/ui/button';
+import { paths } from '@/config/paths';
 
 export default function Header() {
   return (

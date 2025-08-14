@@ -1,3 +1,6 @@
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+
 import { AnimatedSection } from '@/components/ui/animatedSection';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -10,8 +13,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { paths } from '@/config/paths';
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
 
 // Advanced Options Component
 export const AdvancedOptions: React.FC<{

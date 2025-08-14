@@ -1,11 +1,13 @@
 'use client';
 
-import EventInfo from './_components/EventInfo';
-import { CalendarGrid } from './_components/CalendarGrid';
-import ResponseSideBar from './_components/ResponseSideBar';
-import Footer from './_components/Footer';
 import { useState } from 'react';
+
 import Header from '@/components/layout/Header';
+
+import { CalendarGrid } from './_components/CalendarGrid';
+import EventInfo from './_components/EventInfo';
+import Footer from './_components/Footer';
+import ResponseSideBar from './_components/ResponseSideBar';
 
 export default function EventPage() {
   const [isEditActive, setisEditActive] = useState(false);

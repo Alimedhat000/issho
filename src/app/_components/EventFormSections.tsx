@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { TimeSelection } from './TimeSelection';
+import Link from 'next/link';
+
+import { AnimatedSection } from '@/components/ui/animatedSection';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { paths } from '@/config/paths';
+import { useCalendar } from '@/hooks/useCalendar';
+import { EventFormData } from '@/types/event';
+
+import { AdvancedOptions } from './AdvancedOptions';
+import { Calendar } from './Calendar';
 import { DateModeSelector } from './DateModeSelector';
 import { DaysOfWeekSelector } from './DaysOfWeekSelector';
-import { Calendar } from './Calendar';
-import { AdvancedOptions } from './AdvancedOptions';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { paths } from '@/config/paths';
-import Link from 'next/link';
-import { AnimatedSection } from '@/components/ui/animatedSection';
-import { EventFormData } from '@/types/event';
-import { useCalendar } from '@/hooks/useCalendar';
+import { TimeSelection } from './TimeSelection';
 
 function EventFormSectionsComponent({
   formData,

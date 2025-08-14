@@ -1,3 +1,7 @@
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+
+import { ThemeToggle } from '@/app/_components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -6,12 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { ThemeToggle } from '@/app/_components/ThemeToggle';
 import { paths } from '@/config/paths';
 
 export default function SignupPage() {

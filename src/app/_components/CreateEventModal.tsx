@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -11,13 +10,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
+import { Input } from '@/components/ui/input';
+import { useEventForm } from '@/hooks/useEventForm';
 import { CreateEventModalProps } from '@/types/event';
-import { ModeToggle } from './ModeToggle';
 
 import CreateEventButton from './CreateEventButton';
-import { useEventForm } from '@/hooks/useEventForm';
 import { EventFormSections } from './EventFormSections';
+import { ModeToggle } from './ModeToggle';
 
 // Main Modal Component
 export function CreateEventModal({ children }: CreateEventModalProps) {

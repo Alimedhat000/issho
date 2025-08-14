@@ -1,6 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Copy, Edit3 } from 'lucide-react';
 import React from 'react';
+import { Copy, Edit3 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 
 export default function EventInfo({
   onAvailabilityClick,

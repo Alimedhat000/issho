@@ -1,3 +1,5 @@
+import { Label } from '@radix-ui/react-label';
+
 import { AnimatedSection } from '@/components/ui/animatedSection';
 import {
   Select,
@@ -7,7 +9,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { EventFormData } from '@/types/event';
-import { Label } from '@radix-ui/react-label';
 
 export const DateModeSelector: React.FC<{
   dateMode: EventFormData['dateMode'];

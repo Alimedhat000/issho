@@ -1,10 +1,11 @@
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+
+import { ThemeToggle } from '@/app/_components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { ThemeToggle } from '@/app/_components/ThemeToggle';
 import { paths } from '@/config/paths';
 
 export default function LoginPage() {

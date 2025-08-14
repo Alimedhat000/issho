@@ -1,6 +1,7 @@
+import React from 'react';
+
 import { AnimatedSection } from '@/components/ui/animatedSection';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 
 export default function CreateEventButton({
   canCreateEvent,

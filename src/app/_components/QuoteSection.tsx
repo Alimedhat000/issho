@@ -1,6 +1,7 @@
 'use client';
-import { Card } from '@/components/ui/card';
 import { Quote } from 'lucide-react';
+
+import { Card } from '@/components/ui/card';
 
 export function QuoteSection() {
   return (

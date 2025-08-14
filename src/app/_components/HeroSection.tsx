@@ -1,7 +1,8 @@
 'use client';
+import { ArrowRight } from 'lucide-react';
+
 import { CreateEventModal } from '@/app/_components/CreateEventModal';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
 
 export function HeroSection() {
   return (

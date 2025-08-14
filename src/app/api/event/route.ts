@@ -1,7 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
+import { NextRequest, NextResponse } from 'next/server';
+
 import { prisma } from '@/lib/prisma';
 import { sqids } from '@/lib/sqids';
-import { NextRequest, NextResponse } from 'next/server';
 
 async function generateUniqueSqid(numbers: number[]): Promise<string> {
   let sqid = sqids.encode(numbers);
