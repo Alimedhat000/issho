@@ -8,12 +8,14 @@ export default function Header() {
   return (
     <header className="container mx-auto px-4 py-6">
       <nav className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
-            <span className="text-primary-foreground text-xl">緒</span>
+        <Link href={paths.home.getHref()}>
+          <div className="flex items-center gap-2">
+            <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
+              <span className="text-primary-foreground text-xl">緒</span>
+            </div>
+            <span className="text-xl font-bold">Ishho</span>
           </div>
-          <span className="text-xl font-bold">Ishho</span>
-        </div>
+        </Link>
 
         <div className="hidden items-center gap-6 md:flex">
           <a
