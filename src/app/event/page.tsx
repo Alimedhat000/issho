@@ -11,8 +11,23 @@ import ResponseSideBar from './_components/ResponseSideBar';
 
 export default function EventPage() {
   const [isEditActive, setisEditActive] = useState(false);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
 
-  const timeSlots = [
+  const sampleDates = [
+    '2024-08-14',
+    '2024-08-15',
+    '2024-08-19',
+    '2024-08-20',
+    '2024-08-28',
+    '2024-08-29',
+    '2024-09-02',
+    '2024-09-03',
+    '2024-09-05',
+    '2024-09-10',
+  ];
+
+  const sampleTimeSlots = [
+    '9 AM',
     '10 AM',
     '11 AM',
     '12 PM',
@@ -20,10 +35,7 @@ export default function EventPage() {
     '2 PM',
     '3 PM',
     '4 PM',
-    '5 PM',
   ];
-
-  const days = ['Mon', 'Tue', 'Wed'];
 
   return (
     <div className="from-background to-muted/20 min-h-screen bg-gradient-to-br">
@@ -33,16 +45,20 @@ export default function EventPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Event Header */}
         <EventInfo
-          onAvailabilityClick={() => {
-            setisEditActive(!isEditActive);
-            console.log('Clicked');
-          }}
+          setisEditActive={setisEditActive}
+          isEditActive={isEditActive}
         />
 
         <div className="grid gap-8 lg:grid-cols-4">
           {/* Calendar Grid */}
 
-          <CalendarGrid timeSlots={timeSlots} days={days} />
+          <CalendarGrid
+            days={sampleDates}
+            timeSlots={sampleTimeSlots}
+            isEditActive={isEditActive}
+            selectedTimeSlots={selectedTimeSlots}
+            onTimeSlotChange={setSelectedTimeSlots}
+          />
           {/* Responses Sidebar */}
           <ResponseSideBar
             responses={[

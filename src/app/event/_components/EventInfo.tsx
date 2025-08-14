@@ -4,9 +4,11 @@ import { Copy, Edit3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function EventInfo({
-  onAvailabilityClick,
+  setisEditActive,
+  isEditActive,
 }: {
-  onAvailabilityClick: () => void;
+  isEditActive: boolean;
+  setisEditActive: (val: boolean) => void;
 }) {
   return (
     <div className="mb-8">
@@ -34,12 +36,36 @@ export default function EventInfo({
             <Copy className="h-4 w-4" />
             Copy link
           </Button>
-          <Button
-            className="bg-primary hover:bg-primary/90"
-            onClick={onAvailabilityClick}
-          >
-            Add availability
-          </Button>
+          {isEditActive ? (
+            <>
+              <Button
+                className="bg-green-500 hover:bg-green-500/90"
+                onClick={() => {
+                  setisEditActive(true);
+                }}
+              >
+                Save
+              </Button>
+              <Button
+                variant={'destructive'}
+                className="bg-primary hover:bg-primary/90"
+                onClick={() => {
+                  setisEditActive(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button
+              className="bg-primary hover:bg-primary/90"
+              onClick={() => {
+                setisEditActive(true);
+              }}
+            >
+              Add availability
+            </Button>
+          )}
         </div>
       </div>
     </div>

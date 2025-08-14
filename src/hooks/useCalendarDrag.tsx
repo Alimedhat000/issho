@@ -12,19 +12,6 @@ export function useCalendarDrag(
   const [isClick, setIsClick] = useState(false);
   const dragTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // const getDateRange = useCallback((startIso: string, endIso: string) => {
-  //   const start = new Date(startIso);
-  //   const end = new Date(endIso);
-  //   const range: string[] = [];
-  //   const step = start < end ? 1 : -1;
-  //   const current = new Date(start);
-  //   while (step > 0 ? current <= end : current >= end) {
-  //     range.push(current.toISOString().split('T')[0]);
-  //     current.setDate(current.getDate() + step);
-  //   }
-  //   return range;
-  // }, []);
-
   const toggleDate = useCallback(
     (isoDate: string) => {
       const newDates = selectedDates.includes(isoDate)
