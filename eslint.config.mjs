@@ -38,6 +38,7 @@ const config = [
     },
     rules: {
       'prettier/prettier': ['error'],
+      '@typescript-eslint/no-explicit-any': 'warn',
       'simple-import-sort/imports': [
         'error',
         {

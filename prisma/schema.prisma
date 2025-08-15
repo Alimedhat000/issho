@@ -50,9 +50,11 @@ model User {
   email        String   @unique
   name         String?
   avatar       String?
+  password     String?  
+  tokenVersion Int      @default(0)
   googleId     String?  @unique @map("google_id")
-  accessToken  String?  @map("access_token") // For Google Calendar integration
-  refreshToken String?  @map("refresh_token") // For Google Calendar integration
+  accessToken  String?  @map("access_token")
+  refreshToken String?  @map("refresh_token")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 

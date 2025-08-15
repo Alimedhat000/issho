@@ -41,7 +41,7 @@ export default function EventInfo({
               <Button
                 className="bg-green-500 hover:bg-green-500/90"
                 onClick={() => {
-                  setisEditActive(true);
+                  setisEditActive(false);
                 }}
               >
                 Save

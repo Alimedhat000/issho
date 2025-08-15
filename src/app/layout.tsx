@@ -4,7 +4,7 @@ import { GeistSans } from 'geist/font/sans';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/hooks/useAuth';
 
 import '@/styles/globals.css';
 
