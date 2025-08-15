@@ -3,14 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
 
-// GET /api/event/[shortcode] - Get event by shortcode
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { shortcode: string } },
-) {
-  try {
-    const { shortcode } = params;
+interface Params {
+  params: { shortcode: string };
+}
 
+export async function GET(request: NextRequest, context: Params) {
+  const { shortcode } = context.params;
+  try {
     const event = await prisma.event.findUnique({
       where: { shortCode: shortcode },
       include: {
