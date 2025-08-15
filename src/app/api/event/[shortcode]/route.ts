@@ -3,13 +3,14 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
 
-interface Params {
-  params: { shortcode: string };
-}
-
-export async function GET(request: NextRequest, context: Params) {
-  const { shortcode } = context.params;
+export async function GET(
+  req: NextRequest,
+  res: NextResponse,
+  context: { params: { shortcode: string } },
+) {
   try {
+    const { shortcode } = context.params;
+
     const event = await prisma.event.findUnique({
       where: { shortCode: shortcode },
       include: {
@@ -70,12 +71,13 @@ export async function GET(request: NextRequest, context: Params) {
 }
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { shortcode: string } },
+  req: NextRequest,
+  res: NextResponse,
+  context: { params: { shortcode: string } },
 ) {
   try {
-    const { shortcode } = params;
-    const body = await request.json();
+    const { shortcode } = context.params;
+    const body = await req.json();
 
     const {
       title,
@@ -223,11 +225,12 @@ export async function POST(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { shortcode: string } },
+  req: NextRequest,
+  res: NextResponse,
+  context: { params: { shortcode: string } },
 ) {
   try {
-    const { shortcode } = params;
+    const { shortcode } = context.params;
 
     // Check if event exists
     const existingEvent = await prisma.event.findUnique({
