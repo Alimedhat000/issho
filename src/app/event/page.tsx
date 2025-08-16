@@ -61,6 +61,7 @@ export default function EventPage() {
           />
           {/* Responses Sidebar */}
           <ResponseSideBar
+            isEditActive={isEditActive}
             responses={[
               {
                 id: '1',
