@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
+import { Toaster } from 'sonner';
 
 import { AuthProvider } from '@/hooks/useAuth';
 
@@ -34,7 +35,10 @@ html {
         </head>
         <body>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              {children}
+              <Toaster position="top-center" richColors />
+            </AuthProvider>
           </ThemeProvider>
         </body>
       </html>

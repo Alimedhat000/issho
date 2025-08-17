@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-// import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/useAuth';
 import { useCreateEvent } from '@/hooks/useEvent';
 import { useEventForm } from '@/hooks/useEventForm';
 import { CreateEventModalProps } from '@/types/event';
@@ -23,11 +24,19 @@ import { ModeToggle } from './ModeToggle';
 
 // Main Modal Component
 export function CreateEventModal({ children }: CreateEventModalProps) {
-  // const router = useRouter();
+  const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
   const { formData, updateFormData, canCreateEvent, resetForm } =
     useEventForm();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      updateFormData({ creatorId: user.id });
+    }
+  }, [user, updateFormData]);
+
   const { createEvent, loading, error } = useCreateEvent();
 
   const handleCreateEvent = async () => {
@@ -42,7 +51,7 @@ export function CreateEventModal({ children }: CreateEventModalProps) {
         resetForm();
 
         // Navigate to the new event page
-        // router.push(`/event/${newEvent.shortCode}`);
+        router.push(`/event/${newEvent.shortCode}`);
       } else if (error) {
         toast.error(error);
       }

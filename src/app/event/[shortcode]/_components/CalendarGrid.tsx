@@ -9,6 +9,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Event } from '@/types/event';
 
 function useCalendarDrag(
   selectedDates: string[],
@@ -153,12 +154,16 @@ export function CalendarGrid({
   isEditActive,
   selectedTimeSlots = [],
   onTimeSlotChange,
+  event,
+  // isFullDayEvent = false,
 }: {
   days: string[];
   timeSlots: string[];
   isEditActive: boolean;
   selectedTimeSlots?: string[];
   onTimeSlotChange?: (slots: string[]) => void;
+  event?: Event;
+  isFullDayEvent?: boolean;
 }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [screenSize, setScreenSize] = useState('large');
@@ -168,6 +173,32 @@ export function CalendarGrid({
     onTimeSlotChange || (() => {}),
     isEditActive,
   );
+
+  const timezone =
+    event?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Format timezone for display
+  const timezoneDisplay = useMemo(() => {
+    try {
+      const date = new Date();
+      const formatter = new Intl.DateTimeFormat('en', {
+        timeZone: timezone,
+        timeZoneName: 'short',
+      });
+      const parts = formatter.formatToParts(date);
+      const tzName = parts.find((part) => part.type === 'timeZoneName')?.value;
+
+      // Get offset
+      const offset = date.getTimezoneOffset() * -1;
+      const hours = Math.floor(Math.abs(offset) / 60);
+      const minutes = Math.abs(offset) % 60;
+      const sign = offset >= 0 ? '+' : '-';
+
+      return `(GMT${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}) ${tzName}`;
+    } catch {
+      return '(GMT+00:00) UTC';
+    }
+  }, [timezone]);
 
   // Track screen size for responsive pagination
   useEffect(() => {
@@ -348,16 +379,26 @@ export function CalendarGrid({
 
       <div className="flex px-4">
         {/* Time Column */}
-        <div className="w-8 flex-none sm:w-12">
+        <div className="w-10 flex-none sm:w-15">
           <div className="h-15"></div>
-          {timeSlots.map((time, timeIndex) => (
-            <React.Fragment key={timeIndex}>
-              <div className="text-muted-foreground h-5 text-xs">{time}</div>
-              <div className="text-muted-foreground h-5 text-xs"></div>
-              <div className="text-muted-foreground h-5 text-xs"></div>
-              <div className="text-muted-foreground h-5 text-xs"></div>
-            </React.Fragment>
-          ))}
+          {timeSlots.map((time, timeIndex) => {
+            if (timeIndex % 4) {
+              return (
+                <div
+                  key={timeIndex}
+                  className="text-muted-foreground h-5 text-xs"
+                ></div>
+              );
+            }
+            return (
+              <div
+                key={timeIndex}
+                className="text-muted-foreground h-5 w-full text-xs"
+              >
+                {time}
+              </div>
+            );
+          })}
         </div>
 
         {/* Days Columns */}
@@ -395,70 +436,62 @@ export function CalendarGrid({
                 {groupIndex > 0 && (
                   <div className="bg-background w-4 flex-none">
                     {timeSlots.map((time, timeIdx) => (
-                      <React.Fragment key={timeIdx}>
-                        <div className="h-5"></div>
-                        <div className="h-5"></div>
-                        <div className="h-5"></div>
-                        <div className="h-5"></div>
-                      </React.Fragment>
+                      <div key={timeIdx} className="h-5"></div>
                     ))}
                   </div>
                 )}
                 {group.map((day, dayIndex) => (
                   <div key={`${groupIndex}-${dayIndex}`} className="flex-1">
-                    {timeSlots.map((time, timeIdx) => (
-                      <React.Fragment key={timeIdx}>
-                        {[0, 1, 2, 3].map((quarterIndex) => {
-                          const timeSlotId = createTimeSlotId(
-                            day.original,
-                            timeIdx,
-                            quarterIndex,
-                          );
-                          const isSelected = isTimeSlotSelected(timeSlotId);
-                          const isTempDeselected =
-                            isTimeSlotTempDeselected(timeSlotId);
-                          const showAsSelected =
-                            isSelected && !isTempDeselected;
+                    {timeSlots.map((time, timeIdx) => {
+                      const timeSlotId = createTimeSlotId(
+                        day.original,
+                        timeIdx,
+                        0,
+                      );
+                      const isSelected = isTimeSlotSelected(timeSlotId);
+                      const isTempDeselected =
+                        isTimeSlotTempDeselected(timeSlotId);
+                      const showAsSelected = isSelected && !isTempDeselected;
 
-                          return (
-                            <div
-                              key={`${timeIdx}-${quarterIndex}`}
-                              className={cn(
-                                'timeslot h-5 cursor-pointer border-r border-l',
-                                // Border styles based on quarter position
-                                quarterIndex === 0 || quarterIndex === 2
-                                  ? 'border-t'
-                                  : '',
-                                quarterIndex === 2
-                                  ? '[border-top-style:dashed]'
-                                  : '',
-                                // Selection and edit active styles
-                                {
-                                  // Green when selected
-                                  'border-green-500 bg-green-200 hover:bg-green-300':
-                                    showAsSelected && !isEditActive,
-                                  // Red when edit is active
-                                  'border-rose-600 bg-rose-300 hover:border-rose-600 hover:bg-rose-400':
-                                    isEditActive && !showAsSelected,
-                                  // Green with red border when both selected and edit active
-                                  'border-rose-600 bg-green-200 hover:border-rose-600 hover:bg-green-300':
-                                    showAsSelected && isEditActive,
-                                  // Default hover styles when not selected
-                                  'hover:border-foreground border-gray hover:border hover:border-dashed':
-                                    !isEditActive && !showAsSelected,
-                                },
-                              )}
-                              onMouseDown={(e) =>
-                                dragHandlers.handleMouseDown(timeSlotId, e)
-                              }
-                              onMouseEnter={() =>
-                                dragHandlers.handleMouseEnter(timeSlotId)
-                              }
-                            ></div>
-                          );
-                        })}
-                      </React.Fragment>
-                    ))}
+                      return (
+                        <React.Fragment key={timeIdx}>
+                          <div
+                            key={timeIdx}
+                            className={cn(
+                              'timeslot h-5 cursor-pointer border-r border-l',
+                              // Border styles based on quarter position
+                              timeIdx % 4 === 0 || timeIdx % 2 === 0
+                                ? 'border-t'
+                                : '',
+                              timeIdx % 2 === 0
+                                ? '[border-top-style:dashed]'
+                                : '',
+                              // Selection and edit active styles
+                              {
+                                // Green when selected
+                                'border-green-500 bg-green-200 hover:bg-green-300':
+                                  showAsSelected && !isEditActive,
+                                // Red when edit is active
+                                'border-rose-600 bg-rose-300 hover:border-rose-600 hover:bg-rose-400':
+                                  isEditActive && !showAsSelected,
+                                // Green with red border when both selected and edit active
+                                'border-rose-600 bg-green-200 hover:border-rose-600 hover:bg-green-300':
+                                  showAsSelected && isEditActive,
+                                // Default hover styles when not selected
+                                'hover:border-foreground border-gray hover:border hover:border-dashed':
+                                  !isEditActive && !showAsSelected,
+                              },
+                            )}
+                            onMouseDown={(e) =>
+                              dragHandlers.handleMouseDown(timeSlotId, e)
+                            }
+                            onMouseEnter={() =>
+                              dragHandlers.handleMouseEnter(timeSlotId)
+                            }
+                          ></div>
+                        </React.Fragment>
+                      );
+                    })}
                   </div>
                 ))}
               </React.Fragment>
@@ -475,7 +508,7 @@ export function CalendarGrid({
           size="sm"
           className="text-muted-foreground hover:text-foreground h-auto p-1"
         >
-          (GMT+3:00) Cairo
+          {timezoneDisplay}
           <ChevronDown className="ml-1 h-4 w-4" />
         </Button>
         <Button

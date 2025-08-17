@@ -18,9 +18,9 @@ const initialFormData: EventFormData = {
 export function useEventForm() {
   const [formData, setFormData] = useState<EventFormData>(initialFormData);
 
-  const updateFormData = (updates: Partial<EventFormData>) => {
+  const updateFormData = useCallback((updates: Partial<EventFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
-  };
+  }, []);
 
   const canCreateEvent =
     formData.title.trim().length > 0 && formData.selectedDates.length > 0;

@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   req: NextRequest,
-  res: NextResponse,
+  // res: NextResponse,
   context: { params: { shortcode: string } },
 ) {
   try {
@@ -72,7 +72,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  res: NextResponse,
+  // res: NextResponse,
   context: { params: { shortcode: string } },
 ) {
   try {
@@ -226,7 +226,7 @@ export async function POST(
 
 export async function DELETE(
   req: NextRequest,
-  res: NextResponse,
+  // res: NextResponse,
   context: { params: { shortcode: string } },
 ) {
   try {

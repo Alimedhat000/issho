@@ -23,6 +23,7 @@ model Event {
   timezone  String? // IANA timezone for the event
   startTime String?  @map("start_time") // only if dates and times were selected Null if only dates
   endTime   String?  @map("end_time")
+  timeIncrement Int? @map("time_increment") // 15, 30, 60
 
   Participant Participant[]
   TimeSlot    TimeSlot[]

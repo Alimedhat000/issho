@@ -1,42 +1,78 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { parseIncrement, to24HourFormat } from '@/lib/utils';
 import { Event, EventFormData } from '@/types/event';
 
-function to24HourFormat(time: string | null): string | null {
-  if (!time) return null;
+export function useEvent(shortcode: string | null) {
+  const [event, setEvent] = useState<Event | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // normalize input (trim + lowercase)
-  const input = time.trim().toLowerCase();
+  useEffect(() => {
+    if (!shortcode) return;
 
-  // match am/pm format like "9 am", "8:30 pm"
-  const match = input.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/);
-  if (match) {
-    let hours = parseInt(match[1], 10);
-    const minutes = match[2] ? parseInt(match[2], 10) : 0;
-    const period = match[3];
+    const fetchEvent = async () => {
+      setLoading(true);
+      setError(null);
 
-    if (period === 'pm' && hours !== 12) {
-      hours += 12;
-    } else if (period === 'am' && hours === 12) {
-      hours = 0;
-    }
+      try {
+        const response = await fetch(`/api/event/${shortcode}`);
 
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-  }
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Event not found');
+          }
+          throw new Error('Failed to fetch event');
+        }
 
-  // fallback: try "HH:mm" or "HH:mm:ss"
-  const date = new Date(`1970-01-01T${input}`);
-  if (!isNaN(date.getTime())) {
-    return date.toTimeString().slice(0, 5);
-  }
+        const eventData = await response.json();
+        console.log(eventData);
+        setEvent(eventData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        setEvent(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return null;
-}
-function parseIncrement(value: string | number | null): number | null {
-  if (!value) return null;
-  if (typeof value === 'number') return value;
-  const match = value.match(/\d+/);
-  return match ? parseInt(match[0], 10) : null;
+    fetchEvent();
+  }, [shortcode]);
+
+  return {
+    event,
+    loading,
+    error,
+    refetch: () => {
+      if (shortcode) {
+        const fetchEvent = async () => {
+          setLoading(true);
+          setError(null);
+
+          try {
+            const response = await fetch(`/api/event/${shortcode}`);
+
+            if (!response.ok) {
+              if (response.status === 404) {
+                throw new Error('Event not found');
+              }
+              throw new Error('Failed to fetch event');
+            }
+
+            const eventData = await response.json();
+            setEvent(eventData);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+            setEvent(null);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        fetchEvent();
+      }
+    },
+  };
 }
 
 export function useCreateEvent() {
