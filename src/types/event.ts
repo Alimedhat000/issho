@@ -1,5 +1,5 @@
 export interface EventFormData {
-  eventName: string;
+  title: string;
   selectedMode: 'dates-times' | 'dates-only';
   startTime: string; // 09:00 24h format
   endTime: string; // 10:00 24h format
@@ -8,6 +8,7 @@ export interface EventFormData {
   dateMode: 'specific' | 'week'; // specific dates or week days
   timeIncrement: string; // 30min, 1h
   timezone: string; // IANA like "Eroupe/London"
+  creatorId?: string;
 }
 
 export interface CreateEventModalProps {
@@ -24,4 +25,66 @@ export interface CreateEventPayload {
   timeIncrement?: number; // minutes, e.g., 30
   timezone?: string; // IANA, e.g., "Europe/London"
   creatorId?: string; // optional for anonymous
+}
+
+export interface EventDate {
+  id: string;
+  eventId: string;
+  date?: string;
+  weekday?: string;
+  TimeSlot: TimeSlot[];
+}
+
+export interface TimeSlot {
+  id: string;
+  eventDateId: string;
+  hour: number;
+  minute: number;
+  fullDay: boolean;
+  participantId: string;
+  eventId: string;
+  participant: {
+    id: string;
+    name: string;
+    color: string;
+    userId: string;
+  };
+}
+
+export interface Participant {
+  id: string;
+  name: string;
+  color: string;
+  eventId: string;
+  userId?: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+  };
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  shortCode: string;
+  creatorId?: string;
+  timezone?: string;
+  startTime?: string;
+  endTime?: string;
+  timeIncrement?: number;
+  isFullDayEvent?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  EventDates: EventDate[];
+  Participant: Participant[];
+  creator?: User;
 }

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+// import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,6 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useCreateEvent } from '@/hooks/useEvent';
 import { useEventForm } from '@/hooks/useEventForm';
 import { CreateEventModalProps } from '@/types/event';
 
@@ -20,14 +23,38 @@ import { ModeToggle } from './ModeToggle';
 
 // Main Modal Component
 export function CreateEventModal({ children }: CreateEventModalProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const { formData, updateFormData, canCreateEvent } = useEventForm();
+  // const router = useRouter();
 
-  const handleCreateEvent = () => {
-    if (canCreateEvent) {
-      // Handle event creation logic here
-      console.log(formData);
-      setIsOpen(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { formData, updateFormData, canCreateEvent, resetForm } =
+    useEventForm();
+  const { createEvent, loading, error } = useCreateEvent();
+
+  const handleCreateEvent = async () => {
+    if (!canCreateEvent || loading) return;
+
+    try {
+      const newEvent = await createEvent(formData);
+
+      if (newEvent) {
+        toast.success('Event created successfully!');
+        setIsOpen(false);
+        resetForm();
+
+        // Navigate to the new event page
+        // router.push(`/event/${newEvent.shortCode}`);
+      } else if (error) {
+        toast.error(error);
+      }
+    } catch {
+      toast.error('Failed to create event. Please try again.');
+    }
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    if (!loading) {
+      resetForm();
     }
   };
 
@@ -41,7 +68,7 @@ export function CreateEventModal({ children }: CreateEventModalProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
               className="h-6 w-6 p-0 transition-all duration-200 ease-in-out hover:scale-110"
             />
           </DialogTitle>
@@ -52,8 +79,8 @@ export function CreateEventModal({ children }: CreateEventModalProps) {
           <div>
             <Input
               placeholder="Name your event..."
-              value={formData.eventName}
-              onChange={(e) => updateFormData({ eventName: e.target.value })}
+              value={formData.title}
+              onChange={(e) => updateFormData({ title: e.target.value })}
               className="text-base transition-transform duration-200 ease-in-out focus:scale-[1.02]"
             />
           </div>
@@ -68,6 +95,12 @@ export function CreateEventModal({ children }: CreateEventModalProps) {
             formData={formData}
             updateFormData={updateFormData}
           />
+
+          {error && (
+            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
 
           {/* Create Button */}
           <CreateEventButton

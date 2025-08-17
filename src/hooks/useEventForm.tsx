@@ -1,26 +1,33 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import type { EventFormData } from '@/types/event';
 
+const initialFormData: EventFormData = {
+  title: '',
+  selectedMode: 'dates-times',
+  dateMode: 'specific',
+  selectedDates: [],
+  selectedDays: [],
+  startTime: '9 am',
+  endTime: '5 pm',
+  timeIncrement: '15 min',
+  timezone: 'Africa/Cairo',
+  creatorId: undefined,
+};
+
 export function useEventForm() {
-  const [formData, setFormData] = useState<EventFormData>({
-    eventName: '',
-    selectedMode: 'dates-times',
-    startTime: '9 am',
-    endTime: '5 pm',
-    selectedDates: [],
-    selectedDays: [],
-    dateMode: 'specific',
-    timeIncrement: '15 min',
-    timezone: 'Africa/Cairo',
-  });
+  const [formData, setFormData] = useState<EventFormData>(initialFormData);
 
   const updateFormData = (updates: Partial<EventFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
   const canCreateEvent =
-    formData.eventName.trim().length > 0 && formData.selectedDates.length > 0;
+    formData.title.trim().length > 0 && formData.selectedDates.length > 0;
 
-  return { formData, updateFormData, canCreateEvent };
+  const resetForm = useCallback(() => {
+    setFormData(initialFormData);
+  }, []);
+
+  return { formData, updateFormData, canCreateEvent, resetForm };
 }

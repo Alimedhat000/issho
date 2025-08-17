@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
 
       try {
         finalShortCode = await generateUniqueSqid(baseNumbers);
+        console.log(finalShortCode);
       } catch {
         return NextResponse.json(
           { error: 'Unable to generate unique shortCode' },

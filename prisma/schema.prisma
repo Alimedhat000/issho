@@ -16,7 +16,7 @@ datasource db {
 model Event {
   id        String   @id @default(cuid())
   title     String
-  shortCode String   @unique @map("short_code") @db.VarChar(10) // 10 chars that will be used for links 
+  shortCode String   @unique @map("short_code") // 10 chars that will be used for links 
   creatorId String?  @map("creator_id") // Optional - null for anonymous events
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
