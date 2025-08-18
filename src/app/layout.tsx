@@ -1,5 +1,6 @@
 import type React from 'react';
 import { Suspense } from 'react';
+import { Analytics } from '@vercel/analytics/next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import type { Metadata } from 'next';
@@ -38,6 +39,7 @@ html {
             <AuthProvider>
               {children}
               <Toaster position="top-center" richColors />
+              <Analytics />
             </AuthProvider>
           </ThemeProvider>
         </body>
