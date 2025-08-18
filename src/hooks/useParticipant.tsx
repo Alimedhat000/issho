@@ -32,7 +32,7 @@ export function useParticipant(shortcode: string, user?: User | null) {
       console.log(payload);
 
       try {
-        const response = await fetch(`/api/event/${shortcode}/participants`, {
+        const response = await fetch(`/api/event/${shortcode}/participant`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -49,6 +49,7 @@ export function useParticipant(shortcode: string, user?: User | null) {
 
         setParticipant(particpant);
         setShowModal(false);
+        return particpant;
       } catch (err) {
         console.error('Failed to register participant', err);
       }

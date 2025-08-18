@@ -88,18 +88,46 @@ export default function EventPage() {
       return;
     }
 
+    let finalParticipant = participant;
+
     if (user && !participant) {
       // Logged in user but not registered → create participant
-      await registerParticipant();
+      finalParticipant = await registerParticipant();
     }
 
-    // TODO: Implement save functionality with API call
-
-    setisEditActive(false);
-    if (refetch) {
-      refetch();
+    if (!finalParticipant) {
+      toast.error('Could not register participant');
+      return;
     }
-    toast.success('Availability saved successfully!');
+
+    try {
+      // Call the PUT route to replace availability
+      const res = await fetch(`/api/event/${shortcode}/timeslot`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          participantId: finalParticipant.id,
+          dates: selectedTimeSlots, // Make sure these are ISO strings!
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to save timeslots');
+      }
+
+      toast.success('Availability saved successfully!');
+      setisEditActive(false);
+
+      if (refetch) {
+        refetch();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to save availability');
+    }
   };
 
   if (error) {

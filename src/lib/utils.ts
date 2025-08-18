@@ -35,6 +35,7 @@ export function to24HourFormat(time: string | null): string | null {
 
   return null;
 }
+
 export function parseIncrement(value: string | number | null): number | null {
   if (!value) return null;
   if (typeof value === 'number') return value;

@@ -325,8 +325,8 @@ export function CalendarGrid({
 
   const createTimeSlotId = (date: string, time: string) => {
     const time24 = to24HourFormat(time);
-    const iso = new Date(`${date}T${time24}:00`).toISOString();
-    return iso;
+    // console.log(`${date}T${time24}:00.000Z`);
+    return `${date}T${time24}:00.000Z`; // Force UTC, no local conversion
   };
 
   const isTimeSlotSelected = (timeSlotId: string) => {
