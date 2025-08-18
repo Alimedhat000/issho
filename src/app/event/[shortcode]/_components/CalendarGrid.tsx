@@ -106,7 +106,6 @@ function useCalendarDrag(
         tempSelectedDates.forEach((date) => {
           if (!newSelection.includes(date)) {
             newSelection.push(date);
-            console.log(newSelection);
           }
         });
       } else {
@@ -156,7 +155,8 @@ export function CalendarGrid({
   selectedTimeSlots = [],
   onTimeSlotChange,
   event,
-  // isFullDayEvent = false,
+  timeSlotParticipantCounts,
+  getTimeSlotIntensity,
 }: {
   days: string[];
   timeSlots: string[];
@@ -165,6 +165,19 @@ export function CalendarGrid({
   onTimeSlotChange?: (slots: string[]) => void;
   event?: Event;
   isFullDayEvent?: boolean;
+  timeSlotParticipantCounts?: Map<
+    string,
+    {
+      count: number;
+      participants: {
+        id: string;
+        name: string;
+        color: string;
+        userId: string;
+      }[];
+    }
+  >;
+  getTimeSlotIntensity?: (timeSlotId: string) => number;
 }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [screenSize, setScreenSize] = useState('large');
@@ -325,7 +338,6 @@ export function CalendarGrid({
 
   const createTimeSlotId = (date: string, time: string) => {
     const time24 = to24HourFormat(time);
-    // console.log(`${date}T${time24}:00.000Z`);
     return `${date}T${time24}:00.000Z`; // Force UTC, no local conversion
   };
 
@@ -337,6 +349,48 @@ export function CalendarGrid({
 
   const isTimeSlotTempDeselected = (timeSlotId: string) => {
     return dragHandlers.tempDeselectedDates.includes(timeSlotId);
+  };
+
+  // Get the appropriate styling for a timeslot based on its state
+  const getTimeSlotStyling = (timeSlotId: string) => {
+    const intensity = getTimeSlotIntensity?.(timeSlotId) || 0;
+    const isSelected = isTimeSlotSelected(timeSlotId);
+    const isTempDeselected = isTimeSlotTempDeselected(timeSlotId);
+    const showAsSelected = isSelected && !isTempDeselected;
+    const hasParticipants = intensity > 0;
+
+    if (isEditActive) {
+      // Edit mode - focus on current user's selections
+      return cn(
+        'hover:border-foreground border-background hover:border hover:border-dashed',
+        showAsSelected
+          ? 'bg-green-400 hover:bg-green-500'
+          : 'bg-rose-300 hover:border-gray hover:bg-rose-400',
+      );
+    } else {
+      // View mode - show all participants with intensity
+      return cn(
+        'hover:border hover:border-dashed',
+        hasParticipants
+          ? 'hover:border-foreground'
+          : 'hover:border-foreground border-gray',
+      );
+    }
+  };
+
+  // Get inline styles for green intensity
+  const getTimeSlotInlineStyles = (timeSlotId: string) => {
+    if (isEditActive) return {};
+
+    const intensity = getTimeSlotIntensity?.(timeSlotId) || 0;
+    if (intensity === 0) return {};
+
+    // Create green background with varying opacity
+    const bgOpacity = Math.min(0.15 + intensity * 0.35, 0.7); // Range from 0.15 to 0.5
+
+    return {
+      backgroundColor: `rgba(34, 197, 94, ${bgOpacity})`, // green-500 with opacity
+    };
   };
 
   return (
@@ -446,18 +500,16 @@ export function CalendarGrid({
                   >
                     {timeSlots.map((time, timeIdx) => {
                       const timeSlotId = createTimeSlotId(day.original, time);
-                      // console.log(time);
-                      const isSelected = isTimeSlotSelected(timeSlotId);
-                      const isTempDeselected =
-                        isTimeSlotTempDeselected(timeSlotId);
-                      const showAsSelected = isSelected && !isTempDeselected;
+                      const styling = getTimeSlotStyling(timeSlotId);
+                      const inlineStyles = getTimeSlotInlineStyles(timeSlotId);
+                      const intensity = getTimeSlotIntensity?.(timeSlotId) || 0;
 
                       return (
                         <React.Fragment key={timeIdx}>
                           <div
                             key={timeIdx}
                             className={cn(
-                              'timeslot h-5 cursor-pointer border-r border-l',
+                              'timeslot border-gray h-5 cursor-pointer border-r border-l',
                               // Border styles based on quarter position
                               timeIdx % 2 === 0
                                 ? 'border-t [border-top-style:dashed]'
@@ -466,27 +518,24 @@ export function CalendarGrid({
                               timeIdx % 4 === 0
                                 ? 'border-t [border-top-style:solid]'
                                 : '',
-                              // Selection and edit active styles
-                              {
-                                // Green when selected
-                                'border-green-500 bg-green-200 hover:bg-green-300':
-                                  showAsSelected && !isEditActive,
-                                // Red when edit is active
-                                'border-rose-600 bg-rose-300 hover:border-rose-600 hover:bg-rose-400':
-                                  isEditActive && !showAsSelected,
-                                // Green with red border when both selected and edit active
-                                'border-rose-600 bg-green-200 hover:border-rose-600 hover:bg-green-300':
-                                  showAsSelected && isEditActive,
-                                // Default hover styles when not selected
-                                'hover:border-foreground border-gray hover:border hover:border-dashed':
-                                  !isEditActive && !showAsSelected,
-                              },
+                              // Apply styling based on mode and state
+                              styling,
                             )}
-                            onMouseDown={(e) =>
-                              dragHandlers.handleMouseDown(timeSlotId, e)
-                            }
-                            onMouseEnter={() =>
-                              dragHandlers.handleMouseEnter(timeSlotId)
+                            style={inlineStyles}
+                            onMouseDown={(e) => {
+                              if (isEditActive) {
+                                dragHandlers.handleMouseDown(timeSlotId, e);
+                              }
+                            }}
+                            onMouseEnter={() => {
+                              if (isEditActive) {
+                                dragHandlers.handleMouseEnter(timeSlotId);
+                              }
+                            }}
+                            title={
+                              !isEditActive && intensity > 0
+                                ? `${intensity === 1 ? '1 person' : `${Math.round(intensity * (timeSlotParticipantCounts?.get(timeSlotId)?.count || 0))} people`} available`
+                                : undefined
                             }
                           ></div>
                         </React.Fragment>

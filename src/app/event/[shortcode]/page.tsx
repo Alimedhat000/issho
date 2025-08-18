@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -40,8 +40,21 @@ export default function EventPage() {
   const [guestName, setGuestName] = useState('');
 
   // Process event data for display
-  const { dates, timeSlots, participants } = useMemo(() => {
-    if (!event) return { dates: [], timeSlots: [], participants: [] };
+  const {
+    dates,
+    timeSlots,
+    participants,
+    timeSlotParticipantCounts,
+    currentParticipantTimeSlots,
+  } = useMemo(() => {
+    if (!event)
+      return {
+        dates: [],
+        timeSlots: [],
+        participants: [],
+        timeSlotParticipantCounts: new Map(),
+        currentParticipantTimeSlots: [],
+      };
 
     // Extract dates from EventDates
     const dates =
@@ -79,8 +92,80 @@ export default function EventPage() {
         avatarUrl: participant.user?.avatar,
       })) || [];
 
-    return { dates, timeSlots, participants };
-  }, [event]);
+    // Create a map to count participants per timeslot
+    const timeSlotParticipantCounts = new Map<
+      string,
+      {
+        count: number;
+        participants: {
+          id: string;
+          name: string;
+          color: string;
+          userId: string;
+        }[];
+      }
+    >();
+    const currentParticipantTimeSlots: string[] = [];
+
+    // Process all timeslots from all event dates
+    event.EventDates?.forEach((eventDate) => {
+      const dateStr = eventDate.date
+        ? format(parseISO(eventDate.date), 'yyyy-MM-dd')
+        : '';
+
+      // console.log(eventDate.date, dateStr);
+      eventDate.TimeSlot?.forEach((timeSlot) => {
+        // Create ISO format timeslot ID
+        const hours = timeSlot.hour.toString().padStart(2, '0');
+        const minutes = timeSlot.minute.toString().padStart(2, '0');
+        const timeSlotId = `${dateStr}T${hours}:${minutes}:00.000Z`;
+
+        // Count participants for this timeslot
+        const existing = timeSlotParticipantCounts.get(timeSlotId) || {
+          count: 0,
+          participants: [],
+        };
+        existing.count += 1;
+        existing.participants.push(timeSlot.participant);
+        timeSlotParticipantCounts.set(timeSlotId, existing);
+
+        // Check if this timeslot belongs to current participant
+        if (participant && timeSlot.participant.id === participant.id) {
+          currentParticipantTimeSlots.push(timeSlotId);
+        }
+      });
+    });
+
+    return {
+      dates,
+      timeSlots,
+      participants,
+      timeSlotParticipantCounts,
+      currentParticipantTimeSlots,
+    };
+  }, [event, participant]);
+
+  // console.log(currentParticipantTimeSlots);
+
+  const getTimeSlotIntensity = (timeSlotId: string) => {
+    const data = timeSlotParticipantCounts.get(timeSlotId);
+    if (!data || data.count === 0) return 0;
+
+    // Calculate intensity based on participant count
+    // You can adjust this logic based on your needs
+    const maxParticipants = Math.max(
+      ...Array.from(timeSlotParticipantCounts.values()).map((d) => d.count),
+    );
+    return data.count / maxParticipants;
+  };
+
+  useEffect(() => {
+    if (participant && currentParticipantTimeSlots.length > 0) {
+      setSelectedTimeSlots(currentParticipantTimeSlots);
+    } else if (!participant) {
+      setSelectedTimeSlots([]);
+    }
+  }, [participant, currentParticipantTimeSlots]);
 
   const handleSave = async () => {
     if (!user && !participant) {
@@ -180,6 +265,9 @@ export default function EventPage() {
             onTimeSlotChange={setSelectedTimeSlots}
             event={event}
             isFullDayEvent={event.isFullDayEvent}
+            // New
+            timeSlotParticipantCounts={timeSlotParticipantCounts}
+            getTimeSlotIntensity={getTimeSlotIntensity}
           />
           {/* Responses Sidebar */}
           <ResponseSideBar

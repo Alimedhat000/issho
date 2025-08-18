@@ -25,7 +25,7 @@ export function useEvent(shortcode: string | null) {
         }
 
         const eventData = await response.json();
-        console.log(eventData);
+        // console.log(eventData);
         setEvent(eventData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -102,9 +102,9 @@ export function useCreateEvent() {
           Intl.DateTimeFormat().resolvedOptions().timeZone,
         creatorId: eventData.creatorId || null,
       };
-      console.log(eventData);
+      // console.log(eventData);
 
-      console.log(payload);
+      // console.log(payload);
 
       const response = await fetch('/api/event', {
         method: 'POST',

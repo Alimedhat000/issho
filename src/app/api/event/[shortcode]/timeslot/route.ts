@@ -73,12 +73,10 @@ async function handleUpsert(
     }
 
     const createdSlots = [];
-    console.log(dates);
     for (const dateStr of dates) {
-      console.log('Trying adding for', dateStr);
-
       const eventdate = new Date(dateStr);
       const date = new Date(dateStr);
+
       if (isNaN(date.getTime())) continue;
 
       eventdate.setUTCHours(0, 0, 0, 0);
@@ -89,14 +87,13 @@ async function handleUpsert(
       });
 
       if (!eventDate) {
-        console.log('eventDate Not found for', eventdate);
         eventDate = await prisma.eventDate.create({
           data: { eventId: event.id, date: eventdate },
         });
       }
 
-      const hour = date.getHours();
-      const minute = date.getMinutes();
+      const hour = date.getUTCHours();
+      const minute = date.getUTCMinutes();
 
       try {
         const slot = await prisma.timeSlot.create({
