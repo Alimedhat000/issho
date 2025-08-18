@@ -6,7 +6,17 @@ import { useParams, useRouter } from 'next/navigation';
 
 import Header from '@/components/layout/Header';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/useAuth';
 import { useEvent } from '@/hooks/useEvent';
+import { useParticipant } from '@/hooks/useParticipant';
 
 import { CalendarGrid } from './_components/CalendarGrid';
 import EventInfo from './_components/EventInfo';
@@ -22,6 +32,13 @@ export default function EventPage() {
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
 
   const { event, loading, error, refetch } = useEvent(shortcode);
+  const { user } = useAuth();
+  const { showModal, setShowModal, registerParticipant } = useParticipant(
+    shortcode,
+    user,
+  );
+
+  const [guestName, setGuestName] = useState('');
 
   // Process event data for display
   const { dates, timeSlots, participants } = useMemo(() => {
@@ -61,13 +78,13 @@ export default function EventPage() {
         id: participant.id,
         name: participant.name,
         avatarUrl: participant.user?.avatar,
-        color: participant.color,
       })) || [];
 
     return { dates, timeSlots, participants };
   }, [event]);
 
   if (error) {
+    console.log(error);
     router.push('/404');
     return (
       <div className="from-background to-muted/20 min-h-screen bg-gradient-to-br">
@@ -127,6 +144,30 @@ export default function EventPage() {
 
       {/* Footer */}
       <Footer />
+
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter your name</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <Input
+              placeholder="Your name"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+            />
+            <Button
+              onClick={() => {
+                if (guestName.trim()) {
+                  registerParticipant(guestName.trim());
+                }
+              }}
+            >
+              Continue
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

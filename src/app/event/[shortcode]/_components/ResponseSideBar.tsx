@@ -41,20 +41,20 @@ export default function ResponseSideBar({
             ))}
           </div>
         )}
+        {isEditActive && (
+          <div className="flex flex-col gap-2">
+            <span className="font-bold">Legend:</span>
+            <div className="flex items-center gap-2">
+              <div className="size-4 rounded border border-green-500 bg-green-200"></div>
+              <span>Available</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="size-4 rounded border border-rose-500 bg-rose-400"></div>
+              <span>Unavailable</span>
+            </div>
+          </div>
+        )}
       </Card>
-      {isEditActive && (
-        <div className="flex flex-col gap-2">
-          <span className="font-bold">Legend:</span>
-          <div className="flex items-center gap-2">
-            <div className="size-4 rounded border border-green-500 bg-green-200"></div>
-            <span>Available</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="size-4 rounded border border-rose-500 bg-rose-400"></div>
-            <span>Unavailable</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

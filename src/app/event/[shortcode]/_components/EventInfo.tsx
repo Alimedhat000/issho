@@ -89,9 +89,7 @@ export default function EventInfo({
               <Button
                 variant={'destructive'}
                 className="bg-primary hover:bg-primary/90"
-                onClick={() => {
-                  setisEditActive(false);
-                }}
+                onClick={handleCancel}
               >
                 Cancel
               </Button>
@@ -99,7 +97,9 @@ export default function EventInfo({
           ) : (
             <Button
               className="bg-primary hover:bg-primary/90"
-              onClick={handleCancel}
+              onClick={() => {
+                setisEditActive(true);
+              }}
             >
               Add availability
             </Button>

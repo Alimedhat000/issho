@@ -11,6 +11,8 @@ export async function GET(
   try {
     const { shortcode } = await context.params;
 
+    console.log(shortcode);
+
     const event = await prisma.event.findUnique({
       where: { shortCode: shortcode },
       include: {
@@ -22,7 +24,6 @@ export async function GET(
                   select: {
                     id: true,
                     name: true,
-                    color: true,
                     userId: true,
                   },
                 },
@@ -179,7 +180,6 @@ export async function POST(
                   select: {
                     id: true,
                     name: true,
-                    color: true,
                     userId: true,
                   },
                 },

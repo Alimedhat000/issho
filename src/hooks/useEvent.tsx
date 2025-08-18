@@ -17,7 +17,6 @@ export function useEvent(shortcode: string | null) {
 
       try {
         const response = await fetch(`/api/event/${shortcode}`);
-
         if (!response.ok) {
           if (response.status === 404) {
             throw new Error('Event not found');

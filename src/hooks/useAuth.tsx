@@ -1,6 +1,7 @@
 'use client';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Spinner } from '@/components/ui/spinner';
 import { User } from '@/types/index';
 
 interface AuthContextType {
@@ -43,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         // Refresh failed -> logout user
         setUser(null);
-        throw new Error('Session expired. Please log in again.');
+        // throw new Error('Session expired. Please log in again.');
       }
     }
 
@@ -131,7 +132,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{ user, login, signup, logout, loading, error }}
     >
-      {children}
+      {loading ? (
+        <div className="flex h-screen items-center justify-center">
+          <Spinner size="lg" />
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }

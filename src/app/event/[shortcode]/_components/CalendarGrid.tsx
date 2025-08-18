@@ -8,7 +8,7 @@ import React, {
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn, to24HourFormat } from '@/lib/utils';
 import { Event } from '@/types/event';
 
 function useCalendarDrag(
@@ -106,6 +106,7 @@ function useCalendarDrag(
         tempSelectedDates.forEach((date) => {
           if (!newSelection.includes(date)) {
             newSelection.push(date);
+            console.log(newSelection);
           }
         });
       } else {
@@ -322,12 +323,10 @@ export function CalendarGrid({
     return groups;
   }, [paginatedGroups, currentPage]);
 
-  const createTimeSlotId = (
-    date: string,
-    timeIndex: number,
-    quarterIndex: number,
-  ) => {
-    return `${date}_${timeIndex}_${quarterIndex}`;
+  const createTimeSlotId = (date: string, time: string) => {
+    const time24 = to24HourFormat(time);
+    const iso = new Date(`${date}T${time24}:00`).toISOString();
+    return iso;
   };
 
   const isTimeSlotSelected = (timeSlotId: string) => {
@@ -380,7 +379,7 @@ export function CalendarGrid({
       <div className="flex px-4">
         {/* Time Column */}
         <div className="w-10 flex-none sm:w-15">
-          <div className="h-15"></div>
+          <div className="h-13"></div>
           {timeSlots.map((time, timeIndex) => {
             if (timeIndex % 4) {
               return (
@@ -429,7 +428,7 @@ export function CalendarGrid({
           </div>
 
           {/* Time Grid */}
-          <div className="border-gray flex border-b">
+          <div className="flex">
             {currentPageGroups.map((group, groupIndex) => (
               <React.Fragment key={groupIndex}>
                 {/* Add spacing column between groups */}
@@ -441,13 +440,13 @@ export function CalendarGrid({
                   </div>
                 )}
                 {group.map((day, dayIndex) => (
-                  <div key={`${groupIndex}-${dayIndex}`} className="flex-1">
+                  <div
+                    key={`${groupIndex}-${dayIndex}`}
+                    className="border-gray flex-1 border-b"
+                  >
                     {timeSlots.map((time, timeIdx) => {
-                      const timeSlotId = createTimeSlotId(
-                        day.original,
-                        timeIdx,
-                        0,
-                      );
+                      const timeSlotId = createTimeSlotId(day.original, time);
+                      // console.log(time);
                       const isSelected = isTimeSlotSelected(timeSlotId);
                       const isTempDeselected =
                         isTimeSlotTempDeselected(timeSlotId);
@@ -460,11 +459,12 @@ export function CalendarGrid({
                             className={cn(
                               'timeslot h-5 cursor-pointer border-r border-l',
                               // Border styles based on quarter position
-                              timeIdx % 4 === 0 || timeIdx % 2 === 0
-                                ? 'border-t'
-                                : '',
                               timeIdx % 2 === 0
-                                ? '[border-top-style:dashed]'
+                                ? 'border-t [border-top-style:dashed]'
+                                : '',
+
+                              timeIdx % 4 === 0
+                                ? 'border-t [border-top-style:solid]'
                                 : '',
                               // Selection and edit active styles
                               {

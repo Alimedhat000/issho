@@ -68,7 +68,6 @@ model User {
 model Participant {
   id      String  @id @default(cuid())
   name    String
-  color   String
   eventId String  @map("event_id")
   userId  String? @map("user_id") // Optional - null for guest participants
 
