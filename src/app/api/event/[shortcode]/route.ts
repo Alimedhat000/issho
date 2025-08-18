@@ -6,10 +6,10 @@ import { prisma } from '@/lib/prisma';
 export async function GET(
   req: NextRequest,
   // res: NextResponse,
-  context: { params: { shortcode: string } },
+  context: { params: Promise<{ shortcode: string }> },
 ) {
   try {
-    const { shortcode } = context.params;
+    const { shortcode } = await context.params;
 
     const event = await prisma.event.findUnique({
       where: { shortCode: shortcode },
@@ -73,10 +73,11 @@ export async function GET(
 export async function POST(
   req: NextRequest,
   // res: NextResponse,
-  context: { params: { shortcode: string } },
+  context: { params: Promise<{ shortcode: string }> },
 ) {
   try {
-    const { shortcode } = context.params;
+    const { shortcode } = await context.params;
+
     const body = await req.json();
 
     const {
@@ -227,10 +228,10 @@ export async function POST(
 export async function DELETE(
   req: NextRequest,
   // res: NextResponse,
-  context: { params: { shortcode: string } },
+  context: { params: Promise<{ shortcode: string }> },
 ) {
   try {
-    const { shortcode } = context.params;
+    const { shortcode } = await context.params;
 
     // Check if event exists
     const existingEvent = await prisma.event.findUnique({
