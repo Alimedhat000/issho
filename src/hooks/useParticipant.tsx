@@ -76,15 +76,7 @@ export function useParticipant(shortcode: string, user?: User | null) {
     if (saved) {
       setParticipant(JSON.parse(saved));
     }
-
-    if (user) {
-      // Auto-register the logged-in user
-      registerParticipant();
-    } else {
-      // No user and no saved participant → show modal
-      setShowModal(true);
-    }
-  }, [shortcode, storageKey, user, registerParticipant]);
+  }, [shortcode, storageKey]);
 
   return {
     participant,

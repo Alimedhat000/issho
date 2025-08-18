@@ -21,26 +21,18 @@ export default function EventInfo({
   event,
   setisEditActive,
   isEditActive,
-  onEventUpdate,
+  handleSave,
 }: {
   event: Event;
   isEditActive: boolean;
   setisEditActive: (val: boolean) => void;
   onEventUpdate?: () => void;
+  handleSave: () => Promise<void>;
 }) {
   const startingDate = new Date(event.EventDates[0].date!);
   const endingDate = new Date(
     event.EventDates[event.EventDates.length - 1].date!,
   );
-
-  const handleSave = async () => {
-    // TODO: Implement save functionality with API call
-    setisEditActive(false);
-    if (onEventUpdate) {
-      onEventUpdate();
-    }
-    toast.success('Availability saved successfully!');
-  };
 
   const handleCancel = () => {
     setisEditActive(false);

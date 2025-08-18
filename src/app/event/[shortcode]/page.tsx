@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useParams, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import Header from '@/components/layout/Header';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -33,10 +34,8 @@ export default function EventPage() {
 
   const { event, loading, error, refetch } = useEvent(shortcode);
   const { user } = useAuth();
-  const { showModal, setShowModal, registerParticipant } = useParticipant(
-    shortcode,
-    user,
-  );
+  const { participant, showModal, setShowModal, registerParticipant } =
+    useParticipant(shortcode, user);
 
   const [guestName, setGuestName] = useState('');
 
@@ -83,6 +82,26 @@ export default function EventPage() {
     return { dates, timeSlots, participants };
   }, [event]);
 
+  const handleSave = async () => {
+    if (!user && !participant) {
+      setShowModal(true);
+      return;
+    }
+
+    if (user && !participant) {
+      // Logged in user but not registered → create participant
+      await registerParticipant();
+    }
+
+    // TODO: Implement save functionality with API call
+
+    setisEditActive(false);
+    if (refetch) {
+      refetch();
+    }
+    toast.success('Availability saved successfully!');
+  };
+
   if (error) {
     console.log(error);
     router.push('/404');
@@ -119,6 +138,7 @@ export default function EventPage() {
           setisEditActive={setisEditActive}
           isEditActive={isEditActive}
           onEventUpdate={refetch}
+          handleSave={handleSave}
         />
 
         <div className="grid gap-8 lg:grid-cols-4">
