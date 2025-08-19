@@ -88,3 +88,10 @@ export interface Event {
   Participant: Participant[];
   creator?: User;
 }
+
+export interface CalendarDay {
+  original: string;
+  date: Date;
+  dayOfWeek: string;
+  monthDay: string;
+}

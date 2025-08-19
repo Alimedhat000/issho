@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { parseIncrement, to24HourFormat } from '@/lib/utils';
+import { to24HourFormat } from '@/lib/dateUtils';
+import { parseIncrement } from '@/lib/utils';
 import { Event, EventFormData } from '@/types/event';
 
 export function useEvent(shortcode: string | null) {
