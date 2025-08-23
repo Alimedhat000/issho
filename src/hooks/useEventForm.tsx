@@ -23,7 +23,13 @@ export function useEventForm() {
   }, []);
 
   const canCreateEvent =
-    formData.title.trim().length > 0 && formData.selectedDates.length > 0;
+    formData.title.trim().length > 0 &&
+    ((formData.selectedMode === 'dates-times' &&
+      formData.dateMode == 'specific' &&
+      formData.selectedDates.length > 0) ||
+      (formData.selectedMode === 'dates-times' &&
+        formData.dateMode == 'week' &&
+        formData.selectedDays.length > 0));
 
   const resetForm = useCallback(() => {
     setFormData(initialFormData);

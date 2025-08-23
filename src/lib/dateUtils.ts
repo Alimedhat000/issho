@@ -1,3 +1,4 @@
+import { WEEKDAY_ORDER } from '@/types/constants';
 import { CalendarDay } from '@/types/event';
 
 export function to24HourFormat(time: string | null): string | null {
@@ -30,31 +31,76 @@ export function to24HourFormat(time: string | null): string | null {
 
   return null;
 }
+
 export function groupConsecutiveDates(dates: CalendarDay[]): CalendarDay[][] {
   if (!dates.length) return [];
 
-  const groups = [];
-  let currentGroup = [dates[0]];
+  // Separate weekdays & specific dates
+  const weekdayItems = dates.filter((d) => !d.date);
+  const dateItems = dates.filter((d) => d.date);
 
-  for (let i = 1; i < dates.length; i++) {
-    const prevDate = dates[i - 1].date;
-    const currentDate = dates[i].date;
-    const timeDiff = currentDate.getTime() - prevDate.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  // Sort weekdays in natural order (Sunday → Saturday)
+  weekdayItems.sort(
+    (a, b) =>
+      WEEKDAY_ORDER[a.original.toLowerCase()] -
+      WEEKDAY_ORDER[b.original.toLowerCase()],
+  );
 
-    if (daysDiff <= 2) {
-      currentGroup.push(dates[i]);
-    } else {
-      groups.push(currentGroup);
-      currentGroup = [dates[i]];
+  // Group consecutive weekdays together
+  const weekdayGroups: CalendarDay[][] = [];
+  if (weekdayItems.length) {
+    let currentGroup: CalendarDay[] = [weekdayItems[0]];
+
+    for (let i = 1; i < weekdayItems.length; i++) {
+      const prevIndex =
+        WEEKDAY_ORDER[weekdayItems[i - 1].original.toLowerCase()];
+      const currIndex = WEEKDAY_ORDER[weekdayItems[i].original.toLowerCase()];
+
+      if (currIndex === prevIndex + 1) {
+        currentGroup.push(weekdayItems[i]);
+      } else {
+        weekdayGroups.push(currentGroup);
+        currentGroup = [weekdayItems[i]];
+      }
+    }
+
+    if (currentGroup.length > 0) {
+      weekdayGroups.push(currentGroup);
     }
   }
 
-  if (currentGroup.length > 0) {
-    groups.push(currentGroup);
+  // If there are no date items, return weekday groups only
+  if (dateItems.length === 0) {
+    return weekdayGroups;
   }
 
-  return groups;
+  // Sort date-based items chronologically
+  dateItems.sort((a, b) => a.date!.getTime() - b.date!.getTime());
+
+  // Group consecutive dates
+  const dateGroups: CalendarDay[][] = [];
+  let currentDateGroup: CalendarDay[] = [dateItems[0]];
+
+  for (let i = 1; i < dateItems.length; i++) {
+    const prevDate = dateItems[i - 1].date!;
+    const currDate = dateItems[i].date!;
+    const daysDiff =
+      (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (daysDiff <= 1) {
+      currentDateGroup.push(dateItems[i]);
+    } else {
+      dateGroups.push(currentDateGroup);
+      currentDateGroup = [dateItems[i]];
+    }
+  }
+
+  if (currentDateGroup.length > 0) {
+    dateGroups.push(currentDateGroup);
+  }
+
+  // Merge dates first, then weekdays
+  return [...dateGroups, ...weekdayGroups];
 }
 
 export function createTimeSlotId(date: string, time: string): string {

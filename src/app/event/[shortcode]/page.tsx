@@ -56,6 +56,18 @@ export default function EventPage() {
         currentParticipantTimeSlots: [],
       };
 
+    const WEEKDAYS_MAP: Record<string, string> = {
+      mon: 'Mon',
+      tue: 'Tue',
+      wed: 'Wed',
+      thu: 'Thu',
+      fri: 'Fri',
+      sat: 'Sat',
+      sun: 'Sun',
+    };
+
+    // console.log(event);
+
     // Extract dates from EventDates
     const dates =
       event.EventDates?.map((eventDate) => {
@@ -63,8 +75,10 @@ export default function EventPage() {
           return format(parseISO(eventDate.date), 'yyyy-MM-dd');
         }
         // Handle weekdays if needed
-        return eventDate.weekday || '';
+        return WEEKDAYS_MAP[eventDate.weekday?.toLowerCase() || ''] || '';
       }).filter(Boolean) || [];
+
+    // console.log(dates);
 
     // Generate time slots if event has specific times
     let timeSlots: string[] = [];

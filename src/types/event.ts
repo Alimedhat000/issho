@@ -91,7 +91,7 @@ export interface Event {
 
 export interface CalendarDay {
   original: string;
-  date: Date;
+  date: Date | null;
   dayOfWeek: string;
   monthDay: string;
 }

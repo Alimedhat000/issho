@@ -2,7 +2,18 @@ import React from 'react';
 
 import { CalendarDay } from '@/types/event';
 
+const weekdaysMap: Record<string, string> = {
+  Mon: 'Monday',
+  Tue: 'Tuesday',
+  Wed: 'Wednesday',
+  Thu: 'Thursday',
+  Fri: 'Friday',
+  Sat: 'Saturday',
+  Sun: 'Sunday',
+};
+
 export function CalendarHeader({ groups }: { groups: CalendarDay[][] }) {
+  console.log(groups);
   return (
     <div className="flex h-14 items-center sm:top-16">
       {groups.map((group, groupIndex) => (
@@ -15,10 +26,18 @@ export function CalendarHeader({ groups }: { groups: CalendarDay[][] }) {
               key={`${groupIndex}-${dayIndex}`}
               className="bg-background flex-1 space-y-0.5"
             >
-              <div className="text-center text-[12px] capitalize">
-                {day.monthDay}
-              </div>
-              <div className="text-center capitalize">{day.dayOfWeek}</div>
+              {day.date !== null ? (
+                <>
+                  <div className="text-center text-[12px] capitalize">
+                    {day.monthDay}
+                  </div>
+                  <div className="text-center capitalize">{day.dayOfWeek}</div>
+                </>
+              ) : (
+                <div className="text-center text-lg capitalize">
+                  {weekdaysMap[day.dayOfWeek] || day.dayOfWeek}
+                </div>
+              )}
             </div>
           ))}
         </React.Fragment>
