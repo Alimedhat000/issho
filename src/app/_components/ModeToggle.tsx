@@ -17,6 +17,7 @@ export const ModeToggle: React.FC<{
     <Button
       variant={selectedMode === 'dates-only' ? 'default' : 'outline'}
       size="sm"
+      disabled
       onClick={() => onModeChange('dates-only')}
       className="flex-1 transition-all duration-200 ease-in-out"
     >
