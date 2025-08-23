@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { sqids } from '@/lib/sqids';
 
@@ -165,6 +166,45 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.error('Error creating event:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR },
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const currentUser = await getCurrentUser(req);
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: StatusCodes.UNAUTHORIZED },
+      );
+    }
+
+    const events = await prisma.event.findMany({
+      where: { creatorId: currentUser.userId },
+      include: {
+        EventDates: true,
+        Participant: true,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc', // Show newest events first
+      },
+    });
+
+    return NextResponse.json(events, { status: StatusCodes.OK });
+  } catch (error) {
+    console.error('Error fetching events:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: StatusCodes.INTERNAL_SERVER_ERROR },
