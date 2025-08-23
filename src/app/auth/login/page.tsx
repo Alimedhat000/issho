@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { paths } from '@/config/paths';
+import { useAuth } from '@/hooks/useAuth';
 import { useFormValidation } from '@/hooks/useFormValidation';
 
 export default function LoginPage() {
@@ -25,15 +26,12 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || paths.home.getHref();
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
 
+  const { login, loading, error } = useAuth();
   const { errors, validateForm } = useFormValidation();
+  const [apiError, setApiError] = useState('');
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -43,39 +41,15 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm(formData, false)) {
-      return;
-    }
-
-    setLoading(true);
-    setApiError('');
+    if (!validateForm(formData, false)) return;
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
-      }
-
-      // Success - redirect to dashboard
+      await login(formData.email, formData.password);
       router.push(redirectTo);
-    } catch (error) {
+    } catch (err) {
       setApiError(
-        error instanceof Error
-          ? error.message
-          : 'An error occurred during login',
+        err instanceof Error ? err.message : 'An error occurred during login',
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -113,9 +87,9 @@ export default function LoginPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {apiError && (
+              {(apiError || error) && (
                 <Alert variant="destructive">
-                  <AlertDescription>{apiError}</AlertDescription>
+                  <AlertDescription>{apiError || error}</AlertDescription>
                 </Alert>
               )}
 

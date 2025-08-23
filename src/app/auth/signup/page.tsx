@@ -19,12 +19,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { paths } from '@/config/paths';
+import { useAuth } from '@/hooks/useAuth';
 import { useFormValidation } from '@/hooks/useFormValidation';
 
 export default function SignupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || paths.home.getHref();
+
+  const { signup, loading, error } = useAuth();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -36,7 +39,6 @@ export default function SignupPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState('');
 
   const { errors, validateField, validateForm } = useFormValidation();
@@ -58,41 +60,22 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm(formData, true)) {
-      return;
-    }
-
-    setLoading(true);
-    setApiError('');
+    if (!validateForm(formData, true)) return;
 
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-        }),
+      await signup({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
-      }
-
-      // Success - redirect to
+      // Redirect to login page after successful signup
       router.push(paths.auth.login.getHref(redirectTo));
-    } catch (error) {
+    } catch (err) {
       setApiError(
-        error instanceof Error
-          ? error.message
-          : 'An error occurred during signup',
+        err instanceof Error ? err.message : 'An error occurred during signup',
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -132,9 +115,9 @@ export default function SignupPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {apiError && (
+              {(apiError || error) && (
                 <Alert variant="destructive">
-                  <AlertDescription>{apiError}</AlertDescription>
+                  <AlertDescription>{apiError || error}</AlertDescription>
                 </Alert>
               )}
 
