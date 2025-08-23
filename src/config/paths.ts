@@ -2,7 +2,9 @@ export const paths = {
   home: {
     getHref: () => '/',
   },
-
+  dashboard: {
+    getHref: () => '/home',
+  },
   auth: {
     signup: {
       getHref: (redirectTo?: string | null | undefined) =>
