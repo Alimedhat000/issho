@@ -6,7 +6,9 @@ import { useTimezone } from '@/app/event/[shortcode]/_hooks/useTimezone';
 import { createTimeSlotId } from '@/lib/dateUtils';
 import { Event } from '@/types/event';
 
+import { useMouseTooltip } from '../_hooks/useMouseTooltip';
 import { CalendarHeader } from './CalendarHeader';
+import { MouseTooltip } from './MouseTooltip';
 import { PaginationControls } from './PaginationControls';
 import { TimeColumn } from './TimeColumn';
 import { TimeSlot } from './TimeSlot';
@@ -65,6 +67,8 @@ export function CalendarGrid(props: CalendarGridProps) {
       document.removeEventListener('mouseup', dragHandlers.handleMouseUp);
   }, [dragHandlers.handleMouseUp]);
 
+  const tooltip = useMouseTooltip();
+
   return (
     <div className="lg:col-span-3">
       <PaginationControls
@@ -98,6 +102,8 @@ export function CalendarGrid(props: CalendarGridProps) {
                     {timeSlots.map((time, timeIdx) => (
                       <TimeSlot
                         key={timeIdx}
+                        time={time}
+                        day={day}
                         timeSlotId={createTimeSlotId(day.original, time)}
                         timeIdx={timeIdx}
                         isEditActive={isEditActive}
@@ -105,6 +111,7 @@ export function CalendarGrid(props: CalendarGridProps) {
                         getTimeSlotIntensity={getTimeSlotIntensity}
                         selectedTimeSlots={selectedTimeSlots}
                         timeSlotParticipantCounts={timeSlotParticipantCounts}
+                        tooltip={tooltip}
                       />
                     ))}
                   </div>
@@ -116,6 +123,15 @@ export function CalendarGrid(props: CalendarGridProps) {
       </div>
 
       <TimezoneSelector timezoneDisplay={timezoneDisplay} />
+      <MouseTooltip
+        isVisible={tooltip.isVisible}
+        position={tooltip.position}
+        content={tooltip.content}
+        className="font-medium"
+        style={{
+          fontSize: '13px',
+        }}
+      />
     </div>
   );
 }

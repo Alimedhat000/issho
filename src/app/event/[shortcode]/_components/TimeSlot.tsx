@@ -1,15 +1,11 @@
 import { useCalendarDrag } from '@/hooks/useCalendarDrag';
 import { cn } from '@/lib/utils';
+import { weekdaysMap } from '@/types/constants';
+import { CalendarDay } from '@/types/event';
 
-export function TimeSlot({
-  timeSlotId,
-  timeIdx,
-  isEditActive,
-  dragHandlers,
-  getTimeSlotIntensity,
-  selectedTimeSlots,
-  timeSlotParticipantCounts,
-}: {
+import { useMouseTooltip } from '../_hooks/useMouseTooltip';
+
+interface TimeSlotProps {
   timeSlotId: string;
   timeIdx: number;
   isEditActive: boolean;
@@ -28,7 +24,23 @@ export function TimeSlot({
       }[];
     }
   >;
-}) {
+  time: string;
+  day: CalendarDay;
+  tooltip: ReturnType<typeof useMouseTooltip>;
+}
+
+export function TimeSlot({
+  timeSlotId,
+  timeIdx,
+  isEditActive,
+  dragHandlers,
+  getTimeSlotIntensity,
+  selectedTimeSlots,
+  timeSlotParticipantCounts,
+  time,
+  day,
+  tooltip,
+}: TimeSlotProps) {
   const intensity = getTimeSlotIntensity?.(timeSlotId) || 0;
   const isSelected =
     selectedTimeSlots.includes(timeSlotId) ||
@@ -37,6 +49,8 @@ export function TimeSlot({
     dragHandlers.tempDeselectedDates.includes(timeSlotId);
   const showAsSelected = isSelected && !isTempDeselected;
   const hasParticipants = intensity > 0;
+
+  // console.log(timeSlotId);
 
   const getClassNames = () => {
     const baseClasses = cn(
@@ -73,13 +87,35 @@ export function TimeSlot({
     };
   };
 
-  const getTooltip = () => {
-    if (isEditActive || intensity === 0) return undefined;
+  const getTooltipContent = () => {
+    let formattedDate;
+    if (day.date) {
+      formattedDate = day.date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } else {
+      formattedDate = weekdaysMap[day.dayOfWeek];
+    }
 
-    const participantCount = Math.round(
-      intensity * (timeSlotParticipantCounts?.get(timeSlotId)?.count || 0),
-    );
-    return `${participantCount === 1 ? '1 person' : `${participantCount} people`} available`;
+    const formattedTime = time;
+
+    let content = `${formattedDate}, ${formattedTime}`;
+
+    if (!isEditActive && intensity > 0) {
+      const participantCount =
+        Math.round(
+          intensity * (timeSlotParticipantCounts?.get(timeSlotId)?.count || 0),
+        ) || 0;
+
+      if (participantCount > 0) {
+        content += ` — ${participantCount === 1 ? '1 person' : `${participantCount} people`} available`;
+      }
+    }
+
+    return content;
   };
 
   return (
@@ -91,12 +127,18 @@ export function TimeSlot({
           dragHandlers.handleMouseDown(timeSlotId, e);
         }
       }}
-      onMouseEnter={() => {
+      onMouseEnter={(e) => {
         if (isEditActive) {
           dragHandlers.handleMouseEnter(timeSlotId);
         }
+        tooltip.showTooltip(getTooltipContent(), e);
       }}
-      title={getTooltip()}
+      onMouseLeave={() => {
+        tooltip.hideTooltip();
+      }}
+      onMouseMove={(e) => {
+        tooltip.updatePosition(e);
+      }}
     />
   );
 }

@@ -7,3 +7,13 @@ export const WEEKDAY_ORDER: Record<string, number> = {
   fri: 5,
   sat: 6,
 };
+
+export const weekdaysMap: Record<string, string> = {
+  Mon: 'Monday',
+  Tue: 'Tuesday',
+  Wed: 'Wednesday',
+  Thu: 'Thursday',
+  Fri: 'Friday',
+  Sat: 'Saturday',
+  Sun: 'Sunday',
+};

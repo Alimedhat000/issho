@@ -125,7 +125,7 @@ export default function EventPage() {
     event.EventDates?.forEach((eventDate) => {
       const dateStr = eventDate.date
         ? format(parseISO(eventDate.date), 'yyyy-MM-dd')
-        : '';
+        : WEEKDAYS_MAP[eventDate.weekday?.toLowerCase() || ''];
 
       // console.log(eventDate.date, dateStr);
       eventDate.TimeSlot?.forEach((timeSlot) => {

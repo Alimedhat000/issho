@@ -1,19 +1,9 @@
 import React from 'react';
 
+import { weekdaysMap } from '@/types/constants';
 import { CalendarDay } from '@/types/event';
 
-const weekdaysMap: Record<string, string> = {
-  Mon: 'Monday',
-  Tue: 'Tuesday',
-  Wed: 'Wednesday',
-  Thu: 'Thursday',
-  Fri: 'Friday',
-  Sat: 'Saturday',
-  Sun: 'Sunday',
-};
-
 export function CalendarHeader({ groups }: { groups: CalendarDay[][] }) {
-  console.log(groups);
   return (
     <div className="flex h-14 items-center sm:top-16">
       {groups.map((group, groupIndex) => (

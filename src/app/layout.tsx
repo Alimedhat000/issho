@@ -39,7 +39,7 @@ html {
             <AuthProvider>
               {children}
               <Toaster position="top-center" richColors />
-              <Analytics />
+              <Analytics debug={false} />
             </AuthProvider>
           </ThemeProvider>
         </body>
