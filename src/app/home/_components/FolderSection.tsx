@@ -50,9 +50,24 @@ export default function FolderSection({
 }: FolderSectionProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleEditFolder = () => {
+    setDropdownOpen(false); // Close dropdown before opening modal
+    if (onEditFolder) {
+      onEditFolder(folder.id);
+    }
+  };
+
+  const handleDeleteFolder = () => {
+    setDropdownOpen(false); // Close dropdown before opening modal/action
+    if (onDeleteFolder) {
+      onDeleteFolder(folder.id);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -152,7 +167,7 @@ export default function FolderSection({
         )}
 
         {!folder.isDefault && onEditFolder && onDeleteFolder && (
-          <DropdownMenu>
+          <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                 <MoreHorizontal className="h-3 w-3" />
@@ -160,13 +175,13 @@ export default function FolderSection({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-36">
-              <DropdownMenuItem onClick={() => onEditFolder(folder.id)}>
+              <DropdownMenuItem onClick={handleEditFolder}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => onDeleteFolder(folder.id)}
+                onClick={handleDeleteFolder}
                 className="text-red-600 focus:text-red-600"
               >
                 <Trash2 className="mr-2 h-4 w-4" />

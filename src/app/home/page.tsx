@@ -265,6 +265,7 @@ export default function HomePage() {
     } catch (err) {
       console.error('Failed to update folder:', err);
       toast.error('Failed to update folder');
+      handleCloseEditModal();
       throw err;
     }
   };
@@ -298,14 +299,9 @@ export default function HomePage() {
   };
 
   const handleCloseEditModal = () => {
-    // Add a small delay to ensure proper cleanup
-    setTimeout(() => {
-      setIsEditModalOpen(false);
-      setEditingFolder(null);
-
-      // Force remove any pointer-events restrictions
-      document.body.style.pointerEvents = '';
-    }, 100);
+    console.log('called handleCloseEditModal');
+    setIsEditModalOpen(false);
+    setEditingFolder(null);
   };
 
   return (
@@ -329,17 +325,15 @@ export default function HomePage() {
         />
 
         {/* Edit Folder Modal */}
-        {editingFolder && (
-          <FolderModal
-            isOpen={isEditModalOpen}
-            onClose={handleCloseEditModal}
-            onSubmit={handleUpdateFolder}
-            initialName={editingFolder.name}
-            initialColor={editingFolder.color}
-            mode="edit"
-            loading={false}
-          />
-        )}
+        <FolderModal
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          onSubmit={handleUpdateFolder}
+          initialName={editingFolder?.name || ''}
+          initialColor={editingFolder?.color}
+          mode="edit"
+          loading={false}
+        />
       </main>
     </div>
   );

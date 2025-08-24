@@ -26,14 +26,14 @@ interface FolderModalProps {
 const FOLDER_COLORS = [
   { name: 'Blue', value: '#3B82F6', class: 'bg-blue-500' },
   { name: 'Green', value: '#10B981', class: 'bg-emerald-500' },
+  { name: 'Red', value: '#EF4444', class: 'bg-red-500' },
   { name: 'Purple', value: '#8B5CF6', class: 'bg-violet-500' },
   { name: 'Pink', value: '#EC4899', class: 'bg-pink-500' },
-  { name: 'Orange', value: '#F59E0B', class: 'bg-amber-500' },
-  { name: 'Red', value: '#EF4444', class: 'bg-red-500' },
-  { name: 'Teal', value: '#14B8A6', class: 'bg-teal-500' },
-  { name: 'Indigo', value: '#6366F1', class: 'bg-indigo-500' },
+  { name: 'Slate', value: '#334155', class: 'bg-slate-700' },
+  { name: 'Rose', value: '#f32257', class: 'bg-rose-500' },
+  { name: 'Lime', value: '#7ccf00', class: 'bg-lime-500' },
+  { name: 'Amber', value: '#F59E0B', class: 'bg-amber-500' },
   { name: 'Gray', value: '#6B7280', class: 'bg-gray-500' },
-  { name: 'Slate', value: '#64748B', class: 'bg-slate-500' },
 ];
 
 export function FolderModal({
@@ -58,13 +58,6 @@ export function FolderModal({
     }
   }, [isOpen, initialName, initialColor]);
 
-  // Also reset when initialColor changes (for edit mode)
-  useEffect(() => {
-    if (initialColor && isOpen) {
-      setSelectedColor(initialColor);
-    }
-  }, [initialColor, isOpen]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -81,36 +74,21 @@ export function FolderModal({
     try {
       setError('');
       await onSubmit(name.trim(), selectedColor);
-      // Force close the modal and clean up
-      handleClose();
+      // Don't call onClose here - let the parent handle it after successful submission
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     }
   };
 
-  const handleClose = () => {
-    if (!loading) {
-      // Reset form state
-      setName('');
-      setSelectedColor(FOLDER_COLORS[0].value);
-      setError('');
-
-      // Small delay to ensure DOM is ready before closing
-      setTimeout(() => {
-        onClose();
-      }, 50);
+  // Simplified close handler - just call the parent's onClose
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !loading) {
+      onClose();
     }
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open && !loading) {
-          handleClose();
-        }
-      }}
-    >
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -155,14 +133,6 @@ export function FolderModal({
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
             <Button type="submit" disabled={loading || !name.trim()}>
               {loading ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
