@@ -29,7 +29,7 @@ export function useParticipant(shortcode: string, user?: User | null) {
         name: user?.name ?? username,
       };
 
-      console.log(payload);
+      // console.log(payload);
 
       try {
         const response = await fetch(`/api/event/${shortcode}/participant`, {
@@ -39,7 +39,7 @@ export function useParticipant(shortcode: string, user?: User | null) {
           },
           body: JSON.stringify(payload),
         });
-        console.log(response);
+        // console.log(response);
 
         if (!response.ok) {
           const errorData = await response.json();

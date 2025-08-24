@@ -1,10 +1,15 @@
 'use client';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 import { CreateEventModal } from '@/app/_components/CreateEventModal';
 import { Button } from '@/components/ui/button';
+import { paths } from '@/config/paths';
+import { useAuth } from '@/hooks/useAuth';
 
 export function HeroSection() {
+  const { user } = useAuth();
+
   return (
     <section className="mx-auto max-w-4xl text-center">
       <h1 className="from-primary to-primary/60 mb-6 bg-gradient-to-r bg-clip-text text-5xl font-bold text-transparent md:text-6xl">
@@ -17,18 +22,26 @@ export function HeroSection() {
         meetings effortless...
       </p>
       <div className="mb-16 flex flex-col justify-center gap-4 sm:flex-row">
-        <div className="relative">
-          <CreateEventModal>
+        {user ? (
+          <Link href={paths.dashboard.getHref()}>
             <Button size="lg" className="group px-8 py-6 text-lg">
-              Create event
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              Open Dashboard
             </Button>
-          </CreateEventModal>
+          </Link>
+        ) : (
+          <div className="relative">
+            <CreateEventModal>
+              <Button size="lg" className="group px-8 py-6 text-lg">
+                Create event
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </CreateEventModal>
 
-          <span className="text-muted-foreground absolute top-13 left-0 w-full text-xs">
-            It&apos;s free! No login required.
-          </span>
-        </div>
+            <span className="text-muted-foreground absolute top-13 left-0 w-full text-xs">
+              It&apos;s free! No login required.
+            </span>
+          </div>
+        )}
       </div>
     </section>
   );

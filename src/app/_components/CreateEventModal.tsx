@@ -43,7 +43,7 @@ export function CreateEventModal({ children }: CreateEventModalProps) {
     if (!canCreateEvent || loading) return;
 
     try {
-      console.log(formData);
+      // console.log(formData);
       const newEvent = await createEvent(formData);
 
       if (newEvent) {

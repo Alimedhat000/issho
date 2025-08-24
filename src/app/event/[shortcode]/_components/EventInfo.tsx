@@ -8,7 +8,7 @@ import { Event } from '@/types/event';
 const handleCopy = async () => {
   try {
     await navigator.clipboard.writeText(window.location.href); // copies current URL
-    console.log('Link copied!');
+    // console.log('Link copied!');
     toast.success('Link Copied!');
   } catch (err) {
     console.error('Failed to copy: ', err);

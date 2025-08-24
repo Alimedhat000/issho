@@ -12,10 +12,10 @@ export function ThemeToggle() {
       variant="outline"
       size="icon"
       onClick={() => {
-        console.log(
-          'Clicked Setting theme to',
-          theme === 'light' ? 'dark' : 'light',
-        );
+        // console.log(
+        //   'Clicked Setting theme to',
+        //   theme === 'light' ? 'dark' : 'light',
+        // );
         setTheme(theme === 'light' ? 'dark' : 'light');
       }}
       className="relative"

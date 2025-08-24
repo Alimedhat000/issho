@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className="container mx-auto px-4 py-6">
       <nav className="flex items-center justify-between">
-        <Link href={paths.home.getHref()}>
+        <Link href={user ? paths.dashboard.getHref() : paths.home.getHref()}>
           <div className="flex items-center gap-2">
             <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
               <span className="text-primary-foreground text-xl">緒</span>
@@ -24,13 +24,6 @@ export default function Header() {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          {/* <a
-            href="#"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Give feedback
-          </a> */}
-
           {!loading && user ? (
             <>
               <div className="flex items-center gap-2">
