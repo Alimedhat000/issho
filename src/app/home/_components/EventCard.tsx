@@ -27,7 +27,7 @@ interface EventCardProps {
   event: Event;
   folders: Array<{ id: string; name: string }>;
   onCopyLink: (eventId: string) => void;
-  onMoveToFolder: (eventId: string, folderId: string) => void;
+  onMoveToFolder: (eventId: string, folderId: string | null) => void;
   onDuplicate: (eventId: string) => void;
   onDelete: (eventId: string) => void;
 }
@@ -128,7 +128,7 @@ export default function EventCard({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => onCopyLink(event.id)}>
+            <DropdownMenuItem onClick={() => onCopyLink(event.shortCode)}>
               <Link className="mr-2 h-4 w-4" />
               Copy link
             </DropdownMenuItem>
@@ -139,10 +139,17 @@ export default function EventCard({
                 Move to
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
+                <DropdownMenuItem
+                  onClick={() => onMoveToFolder(event.shortCode, null)}
+                  className="italic"
+                >
+                  No folder
+                </DropdownMenuItem>
+
                 {folders.map((folder) => (
                   <DropdownMenuItem
                     key={folder.id}
-                    onClick={() => onMoveToFolder(event.id, folder.id)}
+                    onClick={() => onMoveToFolder(event.shortCode, folder.id)}
                   >
                     {folder.name}
                   </DropdownMenuItem>
@@ -155,7 +162,7 @@ export default function EventCard({
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
-            <DropdownMenuItem onClick={() => onDuplicate(event.id)}>
+            <DropdownMenuItem onClick={() => onDuplicate(event.shortCode)}>
               <Copy className="mr-2 h-4 w-4" />
               Duplicate
             </DropdownMenuItem>
@@ -163,7 +170,7 @@ export default function EventCard({
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
-              onClick={() => onDelete(event.id)}
+              onClick={() => onDelete(event.shortCode)}
               className="text-red-600 focus:text-red-600"
             >
               <Trash2 className="mr-2 h-4 w-4 text-red-600" />

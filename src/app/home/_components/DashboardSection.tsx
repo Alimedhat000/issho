@@ -6,44 +6,54 @@ import { Event } from '@/types/event';
 
 import FolderSection from './FolderSection';
 
+interface Folder {
+  id: string;
+  name: string;
+  color?: string;
+  _count: {
+    events: number;
+  };
+}
+
 interface DashboardSectionProps {
   events: Event[];
+  folders: Folder[];
   loading: boolean;
   error: string | null;
-  folders: Array<{ id: string; name: string }>;
   onCopyLink: (eventId: string) => void;
-  onMoveToFolder: (eventId: string, folderId: string) => void;
+  onMoveToFolder: (eventId: string, folderId: string | null) => void;
   onDuplicateEvent: (eventId: string) => void;
   onDeleteEvent: (eventId: string) => void;
   onEditFolder: (folderId: string) => void;
   onDeleteFolder: (folderId: string) => void;
-  onAddFolder: () => void;
 }
 
 export default function DashboardSection({
   events,
+  folders,
   loading,
   error,
-  folders,
   onCopyLink,
   onMoveToFolder,
   onDuplicateEvent,
   onDeleteEvent,
   onEditFolder,
   onDeleteFolder,
-  onAddFolder,
 }: DashboardSectionProps) {
-  // Group events by folder (for now, all events go to "No folder")
-  const eventsByFolder = {
-    staticFolder: [],
-    noFolder: events,
-  };
+  // Group events by folder
+  const eventsByFolder = React.useMemo(() => {
+    const grouped: Record<string, Event[]> = {
+      'no-folder': events.filter((event) => !event.folderId),
+    };
 
-  // Static folders for demo
-  const staticFolders = [
-    { id: 'static', name: 'Static Folders for now', isDefault: true },
-    { id: 'no-folder', name: 'No folder', isDefault: false },
-  ];
+    folders.forEach((folder) => {
+      grouped[folder.id] = events.filter(
+        (event) => event.folderId === folder.id,
+      );
+    });
+
+    return grouped;
+  }, [events, folders]);
 
   if (loading) {
     return (
@@ -70,37 +80,58 @@ export default function DashboardSection({
     );
   }
 
-  if (events.length === 0) {
+  // Available folders for moving events (excluding current folder)
+  const availableFolders = folders.map((folder) => ({
+    id: folder.id,
+    name: folder.name,
+    color: folder.color,
+  }));
+
+  if (events.length === 0 && folders.length === 0) {
     return (
       <div className="text-muted-foreground py-8 text-center">
-        <p className="mb-2">No events found</p>
-        <p className="text-sm">Create your first event to get started</p>
+        <p className="mb-2">No events or folders found</p>
+        <p className="text-sm">
+          Create your first event or folder to get started
+        </p>
       </div>
     );
   }
 
   return (
     <section>
-      {/* Static folder with no events */}
-      <FolderSection
-        folder={staticFolders[0]}
-        events={eventsByFolder.staticFolder}
-        allFolders={folders}
-        onAddFolder={onAddFolder}
-        onCopyLink={onCopyLink}
-        onMoveToFolder={onMoveToFolder}
-        onDuplicateEvent={onDuplicateEvent}
-        onDeleteEvent={onDeleteEvent}
-      />
+      {/* Display each folder with its events */}
+      {folders.map((folder) => (
+        <FolderSection
+          key={folder.id}
+          folder={{
+            id: folder.id,
+            name: folder.name,
+            isDefault: false,
+            color: folder.color,
+          }}
+          events={eventsByFolder[folder.id] || []}
+          allFolders={availableFolders.filter((f) => f.id !== folder.id)}
+          onEditFolder={onEditFolder}
+          onDeleteFolder={onDeleteFolder}
+          onCopyLink={onCopyLink}
+          onMoveToFolder={onMoveToFolder}
+          onDuplicateEvent={onDuplicateEvent}
+          onDeleteEvent={onDeleteEvent}
+        />
+      ))}
 
-      {/* No folder section with all events */}
+      {/* No folder section */}
       <FolderSection
-        folder={staticFolders[1]}
-        events={eventsByFolder.noFolder}
-        allFolders={folders}
+        folder={{
+          id: 'no-folder',
+          name: 'No folder',
+          isDefault: false,
+        }}
+        events={eventsByFolder['no-folder'] || []}
+        allFolders={availableFolders}
         onEditFolder={onEditFolder}
         onDeleteFolder={onDeleteFolder}
-        onAddFolder={onAddFolder}
         onCopyLink={onCopyLink}
         onMoveToFolder={onMoveToFolder}
         onDuplicateEvent={onDuplicateEvent}

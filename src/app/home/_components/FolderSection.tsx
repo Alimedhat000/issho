@@ -4,7 +4,6 @@ import {
   ChevronRight,
   Edit,
   MoreHorizontal,
-  Plus,
   Trash2,
 } from 'lucide-react';
 
@@ -25,14 +24,14 @@ interface FolderSectionProps {
     id: string;
     name: string;
     isDefault?: boolean;
+    color?: string;
   };
   events: Event[];
   allFolders: Array<{ id: string; name: string }>;
   onEditFolder?: (folderId: string) => void;
   onDeleteFolder?: (folderId: string) => void;
-  onAddFolder: () => void;
   onCopyLink: (eventId: string) => void;
-  onMoveToFolder: (eventId: string, folderId: string) => void;
+  onMoveToFolder: (eventId: string, folderId: string | null) => void;
   onDuplicateEvent: (eventId: string) => void;
   onDeleteEvent: (eventId: string) => void;
 }
@@ -43,7 +42,6 @@ export default function FolderSection({
   allFolders,
   onEditFolder,
   onDeleteFolder,
-  onAddFolder,
   onCopyLink,
   onMoveToFolder,
   onDuplicateEvent,
@@ -71,13 +69,14 @@ export default function FolderSection({
           )}
         </Button>
 
-        <span className={folder.isDefault ? 'text-gray-600' : ''}>
-          {folder.name}
-        </span>
-
-        {folder.isDefault && (
-          <div className="rounded bg-green-100 px-2 py-1 text-xs text-green-800">
-            Static for now
+        {folder.id === 'no-folder' ? (
+          <span>{folder.name}</span>
+        ) : (
+          <div
+            className="text-foreground rounded px-2 py-1 text-xs"
+            style={{ background: folder.color }}
+          >
+            {folder.name}
           </div>
         )}
 
@@ -105,16 +104,6 @@ export default function FolderSection({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-6 w-6 p-0"
-          onClick={onAddFolder}
-        >
-          <Plus className="h-3 w-3" />
-          <span className="sr-only">Add folder</span>
-        </Button>
       </div>
 
       {isExpanded && (

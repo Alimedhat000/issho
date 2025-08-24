@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       timeIncrement,
       timezone,
       creatorId,
+      folderId,
     } = body;
 
     if (!title) {
@@ -53,6 +54,19 @@ export async function POST(req: NextRequest) {
         { error: 'Provide dates or weekDays' },
         { status: StatusCodes.BAD_REQUEST },
       );
+    }
+
+    if (folderId && creatorId) {
+      const folder = await prisma.folder.findUnique({
+        where: { id: folderId },
+      });
+
+      if (!folder || folder.userId !== creatorId) {
+        return NextResponse.json(
+          { error: 'Invalid folder' },
+          { status: StatusCodes.BAD_REQUEST },
+        );
+      }
     }
 
     let finalShortCode = providedShortCode;
@@ -124,6 +138,12 @@ export async function POST(req: NextRequest) {
       include: {
         EventDates: true,
         Participant: true,
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         creator: {
           select: {
             id: true,
@@ -189,6 +209,12 @@ export async function GET(req: NextRequest) {
       include: {
         EventDates: true,
         Participant: true,
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         creator: {
           select: {
             id: true,

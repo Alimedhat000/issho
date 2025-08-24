@@ -77,6 +77,8 @@ export interface Event {
   title: string;
   shortCode: string;
   creatorId?: string;
+  folderId: string | null;
+
   timezone?: string;
   startTime?: string;
   endTime?: string;
@@ -84,6 +86,10 @@ export interface Event {
   isFullDayEvent?: boolean;
   createdAt: string;
   updatedAt: string;
+  folder: {
+    id: string;
+    name: string;
+  } | null;
   EventDates: EventDate[];
   Participant: Participant[];
   creator?: User;
@@ -94,4 +100,16 @@ export interface CalendarDay {
   date: Date | null;
   dayOfWeek: string;
   monthDay: string;
+}
+
+export interface Folder {
+  id: string;
+  name: string;
+  color: string;
+  creatorId: string;
+  createdAt: string;
+  updatedAt: string;
+  _count: {
+    events: number;
+  };
 }

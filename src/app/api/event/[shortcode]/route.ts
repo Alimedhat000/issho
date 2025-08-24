@@ -43,6 +43,12 @@ export async function GET(
             },
           },
         },
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         creator: {
           select: {
             id: true,
@@ -90,6 +96,7 @@ export async function POST(
       timeIncrement,
       timezone,
       creatorId,
+      folderId,
     } = body;
 
     // Check if event exists
@@ -102,6 +109,20 @@ export async function POST(
         { error: 'Event not found' },
         { status: StatusCodes.NOT_FOUND },
       );
+    }
+
+    // Validate folder exists and belongs to creator if provided
+    if (folderId && creatorId) {
+      const folder = await prisma.folder.findUnique({
+        where: { id: folderId },
+      });
+
+      if (!folder || folder.userId !== creatorId) {
+        return NextResponse.json(
+          { error: 'Invalid folder' },
+          { status: StatusCodes.BAD_REQUEST },
+        );
+      }
     }
 
     // Update event in a transaction
@@ -117,6 +138,7 @@ export async function POST(
           endTime: endTime !== undefined ? endTime : existingEvent.endTime,
           creatorId:
             creatorId !== undefined ? creatorId : existingEvent.creatorId,
+          folderId: folderId !== undefined ? folderId : existingEvent.folderId, // Add folder update
         },
       });
       // Handle event dates update if provided
@@ -197,6 +219,12 @@ export async function POST(
                 avatar: true,
               },
             },
+          },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
           },
         },
         creator: {
