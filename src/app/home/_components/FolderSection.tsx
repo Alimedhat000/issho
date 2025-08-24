@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   ChevronDown,
   ChevronRight,
+  Download,
   Edit,
   MoreHorizontal,
   Trash2,
@@ -48,13 +49,79 @@ export default function FolderSection({
   onDeleteEvent,
 }: FolderSectionProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
   };
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+
+    // Check if the dragged item can be dropped here
+    try {
+      const dragData = JSON.parse(e.dataTransfer.getData('application/json'));
+      const currentFolderId = dragData.currentFolderId;
+      const targetFolderId = folder.id === 'no-folder' ? null : folder.id;
+
+      // Only show drop indicator if moving to a different folder
+      if (currentFolderId !== targetFolderId) {
+        setIsDragOver(true);
+      }
+    } catch {
+      // Fallback if JSON data isn't available
+      setIsDragOver(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    // Only remove highlight if leaving the folder section entirely
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setIsDragOver(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    try {
+      const dragData = JSON.parse(e.dataTransfer.getData('application/json'));
+      const eventId = dragData.eventId;
+      const currentFolderId = dragData.currentFolderId;
+      const targetFolderId = folder.id === 'no-folder' ? null : folder.id;
+
+      // Only move if dropping to a different folder
+      if (currentFolderId !== targetFolderId) {
+        onMoveToFolder(eventId, targetFolderId);
+      }
+    } catch (error) {
+      console.log(error);
+      // Fallback to plain text data transfer
+      const eventId = e.dataTransfer.getData('text/plain');
+      if (eventId) {
+        const targetFolderId = folder.id === 'no-folder' ? null : folder.id;
+        onMoveToFolder(eventId, targetFolderId);
+      }
+    }
+  };
+
   return (
-    <div className="mb-6">
+    <div
+      className={`mb-6 transition-all duration-200 ${
+        isDragOver
+          ? 'rounded-lg border-2 border-dashed border-zinc-500 bg-zinc-100/70 p-2 dark:border-zinc-400 dark:bg-zinc-800/30'
+          : ''
+      }`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <div className="text-muted-foreground mb-4 flex items-center gap-2 text-sm">
         <Button
           variant="ghost"
@@ -70,10 +137,14 @@ export default function FolderSection({
         </Button>
 
         {folder.id === 'no-folder' ? (
-          <span>{folder.name}</span>
+          <span className={`${isDragOver ? 'font-semibold' : ''}`}>
+            {folder.name}
+          </span>
         ) : (
           <div
-            className="text-foreground rounded px-2 py-1 text-xs"
+            className={`text-foreground rounded px-2 py-1 text-xs transition-all ${
+              isDragOver ? 'font-semibold' : ''
+            }`}
             style={{ background: folder.color }}
           >
             {folder.name}
@@ -109,9 +180,21 @@ export default function FolderSection({
       {isExpanded && (
         <>
           {events.length === 0 ? (
-            <p className="text-muted-foreground mb-4 pl-6 text-sm">
-              No events in this folder
-            </p>
+            <div
+              className={`text-muted-foreground mb-4 pl-6 text-sm transition-all ${
+                isDragOver
+                  ? 'text-muted-foreground flex items-center justify-center gap-2 py-10 font-medium'
+                  : ''
+              }`}
+            >
+              {isDragOver ? (
+                <>
+                  <Download /> Drop event here
+                </>
+              ) : (
+                'No events in this folder'
+              )}
+            </div>
           ) : (
             <div className="grid gap-4 pl-6 sm:grid-cols-2 lg:grid-cols-2">
               {events.map((event) => (

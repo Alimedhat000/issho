@@ -97,8 +97,34 @@ export default function EventCard({
   onDuplicate,
   onDelete,
 }: EventCardProps) {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData('text/plain', event.shortCode);
+    e.dataTransfer.setData(
+      'application/json',
+      JSON.stringify({
+        eventId: event.shortCode,
+        eventTitle: event.title,
+        currentFolderId: event.folderId || null,
+      }),
+    );
+    e.dataTransfer.effectAllowed = 'move';
+
+    // Add visual feedback
+    e.currentTarget.style.opacity = '0.7';
+  };
+
+  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    // Reset visual feedback
+    e.currentTarget.style.opacity = '1';
+  };
+
   return (
-    <div className="bg-card flex items-center gap-4 rounded-lg border p-4 shadow-sm transition-shadow hover:shadow-md">
+    <div
+      className="bg-card flex items-center gap-4 rounded-lg border p-4 shadow-sm transition-all duration-200 select-none hover:shadow-md"
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <div className="bg-foreground flex h-12 w-12 items-center justify-center rounded-lg">
         {isWeekdayPattern(event.EventDates) ? (
           <CalendarMinus2 className="text-accent h-6 w-6" />
@@ -122,7 +148,12 @@ export default function EventCard({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={(e) => e.stopPropagation()} // Prevent drag when clicking menu
+            >
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Open menu</span>
             </Button>
